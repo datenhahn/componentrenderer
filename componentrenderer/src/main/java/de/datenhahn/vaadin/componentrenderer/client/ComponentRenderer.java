@@ -20,6 +20,7 @@ import com.vaadin.client.ComponentConnector;
 import com.vaadin.client.renderers.WidgetRenderer;
 import com.vaadin.client.widget.grid.RendererCellReference;
 import de.datenhahn.vaadin.componentrenderer.ComponentRendererGridDecorator;
+import de.datenhahn.vaadin.componentrenderer.client.connectors.ComponentRendererConnector;
 
 /**
  * A renderer for vaadin components. Depends on the parent-grid being decorated by the
@@ -29,6 +30,8 @@ import de.datenhahn.vaadin.componentrenderer.ComponentRendererGridDecorator;
  */
 public class ComponentRenderer extends WidgetRenderer<ComponentConnector, FlowPanel> {
 
+    private ComponentRendererConnector connector;
+
     @Override
     public FlowPanel createWidget() {
         return GWT.create(FlowPanel.class);
@@ -37,6 +40,9 @@ public class ComponentRenderer extends WidgetRenderer<ComponentConnector, FlowPa
     @Override
     public void render(RendererCellReference rendererCellReference, ComponentConnector componentConnector, FlowPanel flowPanel) {
         if (componentConnector != null) {
+            if(componentConnector.getParent() == null) {
+                componentConnector.setParent(connector.getParent());
+            }
             replaceCurrentWidget(flowPanel, componentConnector.getWidget());
         } else {
             flowPanel.clear();
@@ -77,4 +83,8 @@ public class ComponentRenderer extends WidgetRenderer<ComponentConnector, FlowPa
         return true;
     }
 
+
+    public void setConnector(ComponentRendererConnector connector) {
+        this.connector = connector;
+    }
 }

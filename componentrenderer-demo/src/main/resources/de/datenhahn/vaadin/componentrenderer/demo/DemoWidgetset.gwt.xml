@@ -8,4 +8,6 @@
     
 
     <inherits name="de.datenhahn.vaadin.componentrenderer.ComponentRendererWidgetSet" />
+
+    
 </module>

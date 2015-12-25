@@ -22,8 +22,7 @@ import de.datenhahn.vaadin.componentrenderer.client.ComponentRenderer;
 import elemental.json.JsonValue;
 
 /**
- * The ComponentRenderer's Connector. Links the Renderer with the {@link ComponentRendererExtensionConnector}
- * and handles the decoding of the ComponentConnectorIds into Components.
+ * The ComponentRenderer's Connector. Handles the decoding of the ComponentConnectorIds into Components.
  *
  * @see ComponentRenderer
  *
@@ -33,14 +32,16 @@ import elemental.json.JsonValue;
 public class ComponentRendererConnector extends AbstractRendererConnector<ComponentConnector> {
 
     /**
-     * Retrieve the renderer and link it with the {@link ComponentRendererExtensionConnector}.
+     * Retrieve the renderer and link it with its connector.
      *
      * @return the renderer
      */
     @Override
     public ComponentRenderer getRenderer() {
 
-        return (ComponentRenderer) super.getRenderer();
+        ComponentRenderer renderer =  (ComponentRenderer) super.getRenderer();
+        renderer.setConnector(this);
+        return renderer;
     }
 
     /**

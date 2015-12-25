@@ -24,30 +24,27 @@ import java.lang.reflect.Method;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 
+import static com.google.gwt.thirdparty.guava.common.collect.Iterators.addAll;
+
 /**
  * Decorates any Grid implementation (e.g. if the Grid was subclassed) with the
  * ComponentRenderer functionality.
- *
  * If you do not have a custom base class, just use the Vaadin {@link Grid}.
- *
  * That includes:
- *
- *   - override of the {@link Grid#iterator()} method to include additional rendererComponents
- *   - method for retrieving the component renderer {@link ComponentRendererProvider#createComponentRenderer()}
- *
- * @author Jonas Hahn (jonas.hahn@datenhahn.de)
+ * - override of the {@link Grid#iterator()} method to include additional rendererComponents
+ * - method for retrieving the component renderer {@link ComponentRendererProvider#createComponentRenderer()}
  *
  * @param <T> the base class that is decorated
+ * @author Jonas Hahn (jonas.hahn@datenhahn.de)
  */
 public class ComponentRendererGridDecorator<T extends Grid> implements MethodInterceptor {
 
-    private ComponentRendererExtension componentRendererExtension;
+    private ComponentRendererComponentStore componentRendererComponentStore;
 
     /**
      * Decorates a subclass of Grid to add the ComponentRenderer functionality.
      *
      * @param myGridClass the base class that is decorated
-     *
      * @return a targetGrid class which supports the component renderer
      */
     public T decorate(Class<T> myGridClass) {
@@ -65,25 +62,23 @@ public class ComponentRendererGridDecorator<T extends Grid> implements MethodInt
 
         T enhancedGrid = myGridClass.cast(gridEnhancer.create());
 
-        componentRendererExtension = ComponentRendererExtension.extend(enhancedGrid);
+        componentRendererComponentStore = ComponentRendererComponentStore.linkWith(enhancedGrid);
 
         return enhancedGrid;
     }
 
     /**
      * Intercepts the following methods and overrides them or implements them:
-     *   - overrides  {@link Grid#iterator()} to include ComponentRenderer's component in the Grid's hierarchy
-     *   - overrides  {@link Grid#setContainerDataSource(Container.Indexed)} so the change listeners can be updated
-     *                after setting a new container
-     *   - implements {@link ComponentRendererProvider#createComponentRenderer()}
+     * - overrides  {@link Grid#iterator()} to include ComponentRenderer's component in the Grid's hierarchy
+     * - overrides  {@link Grid#setContainerDataSource(Container.Indexed)} so the change listeners can be updated
+     * after setting a new container
+     * - implements {@link ComponentRendererProvider#createComponentRenderer()}
      *
      * @param decoratedInstance the decorated instance calling the interceptor
-     * @param method the called method
-     * @param parameters the method parameters
-     * @param methodProxy the method proxy
-     *
+     * @param method            the called method
+     * @param parameters        the method parameters
+     * @param methodProxy       the method proxy
      * @return the return value
-     *
      * @throws Throwable
      */
     @Override
@@ -91,22 +86,21 @@ public class ComponentRendererGridDecorator<T extends Grid> implements MethodInt
 
         if ("iterator".equals(method.getName())) {
 
-            LinkedHashSet<Component> componentList = new LinkedHashSet<Component>();
             Iterator<Component> iterator = (Iterator) methodProxy.invokeSuper(decoratedInstance, parameters);
-            while (iterator.hasNext()) {
-                componentList.add(iterator.next());
-            }
-            componentList.addAll(componentRendererExtension.getRendererComponents());
-            return componentList.iterator();
+            LinkedHashSet<Component> allComponents = new LinkedHashSet<Component>();
+
+            addAll(allComponents, iterator);
+            allComponents.addAll(componentRendererComponentStore.getRendererComponents());
+
+            return allComponents.iterator();
 
         } else if ("createComponentRenderer".equals(method.getName())) {
-
-            return componentRendererExtension.createComponentRenderer();
+            return componentRendererComponentStore.createComponentRenderer();
 
         } else if ("setContainerDataSource".equals(method.getName())) {
 
             methodProxy.invokeSuper(decoratedInstance, parameters);
-            componentRendererExtension.addChangeListeners();
+            componentRendererComponentStore.addContainerChangeListeners();
             return null;
 
         } else if ("forceReRender".equals(method.getName())) {

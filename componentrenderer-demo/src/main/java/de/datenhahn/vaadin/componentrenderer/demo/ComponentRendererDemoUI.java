@@ -119,10 +119,25 @@ public class ComponentRendererDemoUI extends UI {
         Button del = createButtonDelete(myGrid);
         layout.addComponent(del);
 
+        CheckBox enableDisableCheckBox = createEnableDisableCheckBox(myGrid);
+        layout.addComponent(enableDisableCheckBox);
+
         layout.addComponent(myGrid);
         layout.setExpandRatio(myGrid, 1.0f);
 
 
+    }
+
+    private CheckBox createEnableDisableCheckBox(final Grid myGrid) {
+        CheckBox checkBox = new CheckBox("enable/disable");
+        checkBox.setValue(myGrid.isEnabled());
+        checkBox.addValueChangeListener(new Property.ValueChangeListener() {
+            @Override
+            public void valueChange(Property.ValueChangeEvent event) {
+                myGrid.setEnabled(!myGrid.isEnabled());
+            }
+        });
+        return checkBox;
     }
 
     private Button createButtonDelete(final Grid myGrid) {
@@ -137,10 +152,10 @@ public class ComponentRendererDemoUI extends UI {
     }
 
     private Button createButton(final Grid myGrid) {
-        return new Button("add 100 rows", new Button.ClickListener() {
+        return new Button("add 1000 rows", new Button.ClickListener() {
                 @Override
                 public void buttonClick(Button.ClickEvent event) {
-                    for (int i = 0; i < 100; i++) {
+                    for (int i = 0; i < 1000; i++) {
                         ComboBox myCombo = new ComboBox("", newArrayList("foo" + i, "bar" + i));
                         myCombo.addValueChangeListener(new Property.ValueChangeListener() {
                             @Override

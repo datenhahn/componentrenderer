@@ -25,16 +25,16 @@ import elemental.json.JsonValue;
  */
 public class ComponentRenderer extends Grid.AbstractRenderer<Component> {
 
-    private final ComponentRendererExtension extension;
+    private final ComponentRendererComponentStore componentStore;
 
-    public ComponentRenderer(ComponentRendererExtension extension) {
+    public ComponentRenderer(ComponentRendererComponentStore componentStore) {
         super(Component.class, null);
-        this.extension = extension;
+        this.componentStore = componentStore;
     }
 
     @Override
     public JsonValue encode(Component component) {
-        extension.addComponent(component);
+        componentStore.addComponent(component);
         return Json.create(component.getConnectorId());
     }
 

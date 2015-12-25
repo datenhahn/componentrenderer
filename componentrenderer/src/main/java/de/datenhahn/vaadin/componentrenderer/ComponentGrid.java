@@ -2,9 +2,9 @@
  * Licensed under the Apache License,Version2.0(the"License");you may not
  * use this file except in compliance with the License.You may obtain a copy of
  * the License at
- *
+ * <p/>
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p/>
  * Unless required by applicable law or agreed to in writing,software
  * distributed under the License is distributed on an"AS IS"BASIS,WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND,either express or implied.See the
@@ -20,6 +20,8 @@ import com.vaadin.ui.Grid;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 
+import static com.google.gwt.thirdparty.guava.common.collect.Iterators.addAll;
+
 /**
  * A implementation of the ComponentGrid. You can use this directly, or use
  * the cglib-Decorator {@link ComponentRendererGridDecorator} to decorate
@@ -29,33 +31,32 @@ import java.util.LinkedHashSet;
  */
 public class ComponentGrid extends Grid implements ComponentRendererProvider, GridUtilityMethods {
 
-    private ComponentRendererExtension componentRendererExtension;
+    private final ComponentRendererComponentStore componentRendererComponentStore;
 
     public ComponentGrid() {
-        componentRendererExtension = ComponentRendererExtension.extend(this);
+        componentRendererComponentStore = ComponentRendererComponentStore.linkWith(this);
     }
 
     @Override
     public Iterator<Component> iterator() {
-        LinkedHashSet<Component> componentList = new LinkedHashSet<Component>();
-        Iterator<Component> iterator = super.iterator();
-        while (iterator.hasNext()) {
-            componentList.add(iterator.next());
-        }
-        componentList.addAll(componentRendererExtension.getRendererComponents());
-        return componentList.iterator();
 
+        LinkedHashSet<Component> allComponents = new LinkedHashSet<Component>();
+
+        addAll(allComponents, super.iterator());
+        allComponents.addAll(componentRendererComponentStore.getRendererComponents());
+
+        return allComponents.iterator();
     }
 
     @Override
     public void setContainerDataSource(Container.Indexed container) {
         super.setContainerDataSource(container);
-        componentRendererExtension.addChangeListeners();
+        componentRendererComponentStore.addContainerChangeListeners();
     }
 
     @Override
     public ComponentRenderer createComponentRenderer() {
-        return componentRendererExtension.createComponentRenderer();
+        return componentRendererComponentStore.createComponentRenderer();
     }
 
     @Override
