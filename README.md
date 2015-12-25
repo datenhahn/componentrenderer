@@ -33,7 +33,7 @@ To add the dependency in your code use
     <dependency>
         <groupId>de.datenhahn.vaadin</groupId>
         <artifactId>componentrenderer</artifactId>
-        <version>0.1.0</version>
+        <version>0.1.1</version>
     </dependency>
 
 then recompile the widgetset.
@@ -68,10 +68,5 @@ Alternativley you can add the methods to your own subclass
     myGrid.setContainerDataSource(generatedPropertyContainer);
     generatedPropertyContainer.addGeneratedProperty(COL_DELETE, new DeleteButtonValueGenerator(myGrid));
    
-## License
 
-Apache License, Version 2.0
-
-## Bugs and Suggestions
-
-I wrote the Renderer as proof-of-concept, if you can, help to improve it. If you find bugs open issues, I will try to fix them.
+		

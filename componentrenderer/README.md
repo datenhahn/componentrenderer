@@ -33,7 +33,7 @@ To add the dependency in your code use
     <dependency>
         <groupId>de.datenhahn.vaadin</groupId>
         <artifactId>componentrenderer</artifactId>
-        <version>0.1.0</version>
+        <version>0.1.1</version>
     </dependency>
 
 then recompile the widgetset.
