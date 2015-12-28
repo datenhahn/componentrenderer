@@ -34,7 +34,10 @@ public class ComponentRenderer extends WidgetRenderer<ComponentConnector, FlowPa
 
     @Override
     public FlowPanel createWidget() {
-        return GWT.create(FlowPanel.class);
+        FlowPanel panel = GWT.create(FlowPanel.class);
+        panel.setWidth("100%");
+        panel.setHeight("100%");
+        return panel;
     }
 
     @Override
