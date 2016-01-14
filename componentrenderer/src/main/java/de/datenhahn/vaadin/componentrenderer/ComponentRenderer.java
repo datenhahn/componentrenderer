@@ -15,6 +15,7 @@ package de.datenhahn.vaadin.componentrenderer;
 
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Grid;
+import de.datenhahn.vaadin.componentrenderer.client.connectors.ComponentRendererServerRpc;
 import elemental.json.Json;
 import elemental.json.JsonValue;
 
@@ -25,17 +26,45 @@ import elemental.json.JsonValue;
  */
 public class ComponentRenderer extends Grid.AbstractRenderer<Component> {
 
-    private final ComponentRendererComponentStore componentStore;
+    private final ComponentRendererComponentTracker componentStore;
 
-    public ComponentRenderer(ComponentRendererComponentStore componentStore) {
+    public ComponentRenderer(ComponentRendererComponentTracker componentStore) {
         super(Component.class, null);
         this.componentStore = componentStore;
+        registerRpc(new MyComponentRendererServerRpc(componentStore));
     }
 
     @Override
     public JsonValue encode(Component component) {
-        componentStore.addComponent(component);
+        doComponentBookkeeping(component);
         return Json.create(component.getConnectorId());
     }
 
+    private void doComponentBookkeeping(Component component) {
+        componentStore.addComponent(component);
+        componentStore.unmarkForRemoval(component);
+        componentStore.removeMarkedComponents();
+    }
+
+    private class MyComponentRendererServerRpc implements ComponentRendererServerRpc {
+
+        private ComponentRendererComponentTracker componentStore;
+
+        public MyComponentRendererServerRpc(ComponentRendererComponentTracker componentStore) {
+            this.componentStore = componentStore;
+        }
+
+        @Override
+        public void removeComponentConnectors(final String[] connectorIds) {
+
+            for (String connectorId : connectorIds) {
+                componentStore.markForRemoval((Component) getUI().getConnectorTracker().getConnector(connectorId));
+            }
+        }
+
+
+    }
+
 }
+
+

@@ -21,15 +21,13 @@ import com.vaadin.data.Property;
 import com.vaadin.data.util.GeneratedPropertyContainer;
 import com.vaadin.data.util.PropertyValueGenerator;
 import com.vaadin.event.MouseEvents;
-import com.vaadin.server.FontAwesome;
-import com.vaadin.server.ThemeResource;
-import com.vaadin.server.VaadinRequest;
-import com.vaadin.server.VaadinServlet;
+import com.vaadin.server.*;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.*;
 import de.datenhahn.vaadin.componentrenderer.ComponentRendererGridDecorator;
 import de.datenhahn.vaadin.componentrenderer.ComponentRendererProvider;
 import de.datenhahn.vaadin.componentrenderer.GridUtilityMethods;
+import org.fluttercode.datafactory.impl.DataFactory;
 
 import javax.servlet.annotation.WebServlet;
 
@@ -40,26 +38,45 @@ import static com.google.gwt.thirdparty.guava.common.collect.Lists.newArrayList;
  *
  * @author Jonas Hahn (jonas.hahn@datenhahn.de)
  */
-@Theme("valo")
+@Theme("demotheme")
 @Widgetset("de.datenhahn.vaadin.componentrenderer.demo.DemoWidgetset")
 public class ComponentRendererDemoUI extends UI {
     public static final String COL_TEXT = "Text Column";
+    public static final String COL_IMAGE = "image";
     public static final String COL_FONT_LABEL_1 = "Component 1";
     public static final String COL_FONT_LABEL_2 = "Component 2";
     public static final String COL_FONT_LABEL_3 = "Component 3";
     public static final String COL_DELETE = "Delete";
     public static final String COL_ARROWS = "Expand Details";
+    private DataFactory testData = new DataFactory();
     final VerticalLayout layout = new VerticalLayout();
 
-    private HorizontalLayout createDemoLayout(String text) {
+    private VerticalLayout createAddress() {
+        VerticalLayout layout = new VerticalLayout();
+        layout.setSpacing(true);
+        layout.addComponent(new Label(testData.getFirstName() + " " + testData.getLastName()));
+        layout.addComponent(new Label(testData.getAddress()));
+        layout.addComponent(new Label(testData.getNumberText(5) + " " + testData.getCity()));
+        return layout;
+    }
+
+    private HorizontalLayout createRating() {
         HorizontalLayout layout = new HorizontalLayout();
         layout.setSpacing(true);
-        layout.addComponent(new Label(FontAwesome.SMILE_O.getHtml(), ContentMode.HTML));
+        layout.setSizeFull();
 
-        Label label = new Label(text);
-        label.setDescription(text);
+        Label overallRating = new Label(FontAwesome.STAR.getHtml() , ContentMode.HTML);
+        overallRating.addStyleName("green");
+        overallRating.setDescription("Very good : " + testData.getNumberBetween(90, 100) + "% Chance");
+        overallRating.setWidthUndefined();
+        layout.addComponent(overallRating);
 
-        layout.addComponent(label);
+
+        Label carRating = new Label(FontAwesome.CAR.getHtml() , ContentMode.HTML);
+        carRating.addStyleName("red");
+        carRating.setDescription("Unlikely : " + testData.getNumberBetween(1, 15) + "%");
+        carRating.setWidthUndefined();
+        layout.addComponent(carRating);
 
         return layout;
     }
@@ -98,6 +115,7 @@ public class ComponentRendererDemoUI extends UI {
 
 
         myGrid.addColumn(COL_TEXT);
+        myGrid.addColumn(COL_IMAGE, Component.class).setRenderer(((ComponentRendererProvider) myGrid).createComponentRenderer());
         myGrid.addColumn(COL_FONT_LABEL_1, Component.class).setRenderer(((ComponentRendererProvider) myGrid).createComponentRenderer());
         myGrid.addColumn(COL_FONT_LABEL_2, Component.class).setRenderer(((ComponentRendererProvider)myGrid).createComponentRenderer());
         myGrid.addColumn(COL_FONT_LABEL_3, Component.class).setRenderer(((ComponentRendererProvider)myGrid).createComponentRenderer());
@@ -166,10 +184,11 @@ public class ComponentRendererDemoUI extends UI {
                         Object itemId = myGrid.getContainerDataSource().addItem();
                         Item item = myGrid.getContainerDataSource().getItem(itemId);
                         item.getItemProperty(COL_TEXT).setValue("Text " + itemId);
-                        item.getItemProperty(COL_FONT_LABEL_1).setValue(createDemoLayout("1 - " + itemId));
-                        item.getItemProperty(COL_FONT_LABEL_2).setValue(createDemoLayout("2 - " + itemId));
+                        item.getItemProperty(COL_IMAGE).setValue(new Embedded("",new ClassResource(this.getClass(), "annoyed-cat-small.jpg")));
+                        item.getItemProperty(COL_FONT_LABEL_1).setValue(createAddress());
+                        item.getItemProperty(COL_FONT_LABEL_2).setValue(createRating());
                         item.getItemProperty(COL_FONT_LABEL_3).setValue(myCombo);
-                        ((GridUtilityMethods)myGrid).forceReRender();
+                        //((GridUtilityMethods)myGrid).forceReRender();
                     }
                 }
             });

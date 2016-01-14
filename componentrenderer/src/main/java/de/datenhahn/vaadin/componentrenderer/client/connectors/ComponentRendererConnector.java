@@ -15,7 +15,6 @@ package de.datenhahn.vaadin.componentrenderer.client.connectors;
 
 import com.vaadin.client.ComponentConnector;
 import com.vaadin.client.ConnectorMap;
-import com.vaadin.client.ServerConnector;
 import com.vaadin.client.connectors.AbstractRendererConnector;
 import com.vaadin.shared.ui.Connect;
 import de.datenhahn.vaadin.componentrenderer.client.ComponentRenderer;
@@ -24,12 +23,17 @@ import elemental.json.JsonValue;
 /**
  * The ComponentRenderer's Connector. Handles the decoding of the ComponentConnectorIds into Components.
  *
- * @see ComponentRenderer
- *
  * @author Jonas Hahn (jonas.hahn@datenhahn.de)
+ * @see ComponentRenderer
  */
 @Connect(de.datenhahn.vaadin.componentrenderer.ComponentRenderer.class)
 public class ComponentRendererConnector extends AbstractRendererConnector<ComponentConnector> {
+
+    private ConnectorMap connectorMap;
+    
+    public ComponentRendererServerRpc getRpc() {
+        return getRpcProxy(ComponentRendererServerRpc.class);
+    }
 
     /**
      * Retrieve the renderer and link it with its connector.
@@ -38,8 +42,8 @@ public class ComponentRendererConnector extends AbstractRendererConnector<Compon
      */
     @Override
     public ComponentRenderer getRenderer() {
-
-        ComponentRenderer renderer =  (ComponentRenderer) super.getRenderer();
+        connectorMap = ConnectorMap.get(getConnection());
+        ComponentRenderer renderer = (ComponentRenderer) super.getRenderer();
         renderer.setConnector(this);
         return renderer;
     }
@@ -47,12 +51,15 @@ public class ComponentRendererConnector extends AbstractRendererConnector<Compon
     /**
      * Decodes the connectorId from the JSON to the real connector.
      *
-     * @param value the json value to decode
+     * @param jsonConnectorId the json value to decode
      * @return the component connector to be rendered by the ComponentRenderer
      */
     @Override
-    public ComponentConnector decode(JsonValue value) {
-        ServerConnector componentConnector = ConnectorMap.get(getConnection()).getConnector(value.toString());
-        return (ComponentConnector) componentConnector;
+    public ComponentConnector decode(JsonValue jsonConnectorId) {
+        return lookupConnector(jsonConnectorId.toString());
+    }
+
+    private ComponentConnector lookupConnector(String connectorId) {
+        return (ComponentConnector) connectorMap.getConnector(connectorId);
     }
 }

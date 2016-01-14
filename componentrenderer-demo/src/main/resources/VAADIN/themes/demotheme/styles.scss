@@ -1,0 +1,21 @@
+@import "../valo/valo.scss";
+
+.demotheme {
+  @include valo;
+
+  .v-grid-body .v-grid-cell {
+    height: 120px;
+    padding-top: 7px;
+  }
+
+  .green {
+    color: rgba(50, 186, 7, 0.82);
+    font-size: 200%;
+  }
+
+  .red {
+    color: rgba(255, 38, 0, 0.6);
+    font-size: 200%;
+  }
+
+}

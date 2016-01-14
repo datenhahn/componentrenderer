@@ -14,13 +14,16 @@
 package de.datenhahn.vaadin.componentrenderer.client;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.vaadin.client.ComponentConnector;
 import com.vaadin.client.renderers.WidgetRenderer;
 import com.vaadin.client.widget.grid.RendererCellReference;
 import de.datenhahn.vaadin.componentrenderer.ComponentRendererGridDecorator;
 import de.datenhahn.vaadin.componentrenderer.client.connectors.ComponentRendererConnector;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * A renderer for vaadin components. Depends on the parent-grid being decorated by the
@@ -28,65 +31,69 @@ import de.datenhahn.vaadin.componentrenderer.client.connectors.ComponentRenderer
  *
  * @author Jonas Hahn (jonas.hahn@datenhahn.de)
  */
-public class ComponentRenderer extends WidgetRenderer<ComponentConnector, FlowPanel> {
+public class ComponentRenderer extends WidgetRenderer<ComponentConnector, SimplePanel> {
 
+    public static final int MAX_REMOVABLE_CONNECTORS = 100;
     private ComponentRendererConnector connector;
+    private HashMap<SimplePanel, ComponentConnector> widgetConnectorMap = new HashMap<SimplePanel, ComponentConnector>();
+    private Set<String> removeableConnectors = new HashSet<String>(MAX_REMOVABLE_CONNECTORS);
 
     @Override
-    public FlowPanel createWidget() {
-        FlowPanel panel = GWT.create(FlowPanel.class);
+    public SimplePanel createWidget() {
+        SimplePanel panel = GWT.create(SimplePanel.class);
         panel.setWidth("100%");
         panel.setHeight("100%");
         return panel;
     }
 
     @Override
-    public void render(RendererCellReference rendererCellReference, ComponentConnector componentConnector, FlowPanel flowPanel) {
+    public void render(RendererCellReference rendererCellReference, ComponentConnector componentConnector, SimplePanel panel) {
         if (componentConnector != null) {
-            if(componentConnector.getParent() == null) {
-                componentConnector.setParent(connector.getParent());
+
+            ComponentConnector previousConnector = widgetConnectorMap.get(panel);
+
+            if (previousConnector != componentConnector) {
+
+                widgetConnectorMap.put(panel, componentConnector);
+                panel.setWidget(componentConnector.getWidget());
+
+                if(previousConnector != null) {
+                    markConnectorForRemoval(previousConnector.getConnectorId());
+                }
             }
-            replaceCurrentWidget(flowPanel, componentConnector.getWidget());
+
         } else {
-            flowPanel.clear();
+            panel.clear();
         }
     }
 
     /**
-     * Replaces the widget in the flow panel with a new widget.
+     * Marks a component connector as removable and flushes the marked
+     * connector-ids to the server when the threshold {@link #MAX_REMOVABLE_CONNECTORS} is hit.
      *
-     * @param flowPanel the flow panel
-     * @param newWidget the new widget
+     * @param connectorId the id of the connector
      */
-    private void replaceCurrentWidget(FlowPanel flowPanel, Widget newWidget) {
-
-        if(isUpdateNeeded(flowPanel, newWidget)) {
-            flowPanel.clear();
-            flowPanel.add(newWidget);
+    private void markConnectorForRemoval(String connectorId) {
+        removeableConnectors.add(connectorId);
+        if (removeableConnectors.size() >= MAX_REMOVABLE_CONNECTORS) {
+            flushRemovableConnectors();
         }
     }
 
     /**
-     * Checks if the widget in a flowpanel has changed.
-     *
-     * @param flowPanel the flowpanel
-     * @param newWidget the new widget
-     * @return true if the panel needs to be updated, false when the new widget is already in the panel and the only widget
+     * Flush the removable component connectors to the serverside and
+     * clear the client-side removableComponents-bucket.
      */
-    private boolean isUpdateNeeded(FlowPanel flowPanel, Widget newWidget) {
-        if (flowPanel.getWidgetCount() == 1) {
-
-            Widget currentWidget = flowPanel.getWidget(0);
-
-            if (currentWidget == newWidget) {
-                return false;
-            }
-        }
-
-        return true;
+    private void flushRemovableConnectors() {
+        connector.getRpc().removeComponentConnectors(removeableConnectors.toArray(new String[removeableConnectors.size()]));
+        removeableConnectors.clear();
     }
 
-
+    /**
+     * Set the renderer's connector.
+     *
+     * @param connector the renderer's connector
+     */
     public void setConnector(ComponentRendererConnector connector) {
         this.connector = connector;
     }

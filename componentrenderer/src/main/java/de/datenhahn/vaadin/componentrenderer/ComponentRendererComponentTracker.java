@@ -32,27 +32,26 @@ import static com.google.gwt.thirdparty.guava.common.collect.Sets.newHashSet;
  *
  * @author Jonas Hahn (jonas.hahn@datenhahn.de)
  */
-public class ComponentRendererComponentStore {
+public class ComponentRendererComponentTracker {
 
-    private final LinkedHashSet<Component> rendererComponents = new LinkedHashSet<Component>();
+    private final LinkedList<Component> activeComponents = new LinkedList<Component>();
+    private final LinkedList<Component> removeableComponents = new LinkedList<Component>();
+
     private final HashSet<Object> componentColumnPropertyIds = new HashSet<Object>();
     private final HashMap<Object, Set<Component>> itemIdComponentMapping = new HashMap<Object, Set<Component>>();
     private final Grid grid;
 
-    private final ComponentRendererContainerItemSetChangeListener componentRendererContainerItemSetChangeListener;
-    private final ComponentColumnContainerPropertySetChangeListener componentColumnContainerPropertySetChangeListener;
-    private final ItemIdComponentMappingValueChangeListener itemIdComponentMappingValueChangeListener;
+    private final ContainerItemSetChangeListener ContainerItemSetChangeListener = new ContainerItemSetChangeListener();
+    private final ContainerPropertySetChangeListener containerPropertySetChangeListener = new ContainerPropertySetChangeListener();
+    private final ItemIdComponentMappingListener itemIdComponentMappingListener = new ItemIdComponentMappingListener();
 
     /**
      * Extends a grid and adds the ComponentRenderer's tracking functionality.
      *
      * @param grid the target grid
      */
-    private ComponentRendererComponentStore(Grid grid) {
+    private ComponentRendererComponentTracker(Grid grid) {
         this.grid = grid;
-        componentRendererContainerItemSetChangeListener = new ComponentRendererContainerItemSetChangeListener();
-        componentColumnContainerPropertySetChangeListener = new ComponentColumnContainerPropertySetChangeListener();
-        itemIdComponentMappingValueChangeListener = new ItemIdComponentMappingValueChangeListener();
         addContainerChangeListeners();
     }
 
@@ -61,8 +60,8 @@ public class ComponentRendererComponentStore {
      *
      * @return set of components
      */
-    public LinkedHashSet<Component> getRendererComponents() {
-        return rendererComponents;
+    public LinkedList<Component> getRendererComponents() {
+        return activeComponents;
     }
 
     /**
@@ -80,14 +79,14 @@ public class ComponentRendererComponentStore {
      *
      * @param targetGrid the target grid
      */
-    public static ComponentRendererComponentStore linkWith(Grid targetGrid) {
-        return new ComponentRendererComponentStore(targetGrid);
+    public static ComponentRendererComponentTracker linkWith(Grid targetGrid) {
+        return new ComponentRendererComponentTracker(targetGrid);
     }
 
     private void addContainerChangeListeners(IndexedContainer indexedContainer) {
-        indexedContainer.addItemSetChangeListener(componentRendererContainerItemSetChangeListener);
-        indexedContainer.addPropertySetChangeListener(componentColumnContainerPropertySetChangeListener);
-        indexedContainer.addValueChangeListener(itemIdComponentMappingValueChangeListener);
+        indexedContainer.addItemSetChangeListener(ContainerItemSetChangeListener);
+        indexedContainer.addPropertySetChangeListener(containerPropertySetChangeListener);
+        indexedContainer.addValueChangeListener(itemIdComponentMappingListener);
     }
 
     private void addContainerChangeListeners(GeneratedPropertyContainer generatedPropertyContainer) {
@@ -95,11 +94,11 @@ public class ComponentRendererComponentStore {
         // Item and PropertySet Change events are now handled by the wrapping GeneratedPropertyContainer
         // so remove them from the wrapped container
         IndexedContainer wrapped = (IndexedContainer) generatedPropertyContainer.getWrappedContainer();
-        wrapped.removeItemSetChangeListener(componentRendererContainerItemSetChangeListener);
-        wrapped.removePropertySetChangeListener(componentColumnContainerPropertySetChangeListener);
+        wrapped.removeItemSetChangeListener(ContainerItemSetChangeListener);
+        wrapped.removePropertySetChangeListener(containerPropertySetChangeListener);
 
-        generatedPropertyContainer.addItemSetChangeListener(componentRendererContainerItemSetChangeListener);
-        generatedPropertyContainer.addPropertySetChangeListener(componentColumnContainerPropertySetChangeListener);
+        generatedPropertyContainer.addItemSetChangeListener(ContainerItemSetChangeListener);
+        generatedPropertyContainer.addPropertySetChangeListener(containerPropertySetChangeListener);
     }
 
     /**
@@ -123,10 +122,13 @@ public class ComponentRendererComponentStore {
      * @param component the component
      */
     public void addComponent(Component component) {
-        rendererComponents.add(component);
-        component.setParent(grid);
-        grid.markAsDirty();
+        if (component != null && !activeComponents.contains(component)) {
+            component.setParent(grid);
+            activeComponents.add(component);
+            grid.markAsDirty();
+        }
     }
+
 
     /**
      * Removes a component from the extension's component tracking,
@@ -136,13 +138,41 @@ public class ComponentRendererComponentStore {
      * @param component the component
      */
     private void removeComponent(Component component) {
-        if (component.getParent() != null) {
-            grid.markAsDirty();
-            component.detach();
+        if (component != null) {
+            activeComponents.remove(component);
+            if (component.getParent() != null) {
+                component.setParent(null);
+                grid.markAsDirty();
+            }
         }
-        rendererComponents.remove(component);
     }
 
+    public void markForRemoval(Component component) {
+        if (component != null) {
+            removeableComponents.add(component);
+        }
+    }
+
+    public void unmarkForRemoval(Component component) {
+        removeableComponents.remove(component);
+    }
+
+    public void removeMarkedComponents() {
+
+        Iterator<Component> componentIterator = removeableComponents.iterator();
+        while (componentIterator.hasNext()) {
+            removeComponent(componentIterator.next());
+            componentIterator.remove();
+        }
+
+    }
+
+    /**
+     * Adds a component to the item-id component tracking.
+     *
+     * @param itemId the item-id with which this component should be associated
+     * @param component the component
+     */
     private void addItemIdComponentMapping(Object itemId, Component component) {
         if (component != null) {
             Set<Component> components = itemIdComponentMapping.get(itemId);
@@ -159,12 +189,15 @@ public class ComponentRendererComponentStore {
      * which are not longer part of the grid's container.
      * The adding of the components to the tracking and grid is done in the renderer itself.
      */
-    private class ComponentRendererContainerItemSetChangeListener implements Container.ItemSetChangeListener {
+    private class ContainerItemSetChangeListener implements Container.ItemSetChangeListener {
 
         private void addRowComponents(Object itemId, Item item) {
+
             for (Object columnProperty : componentColumnPropertyIds) {
-                addItemIdComponentMapping(itemId, (Component) item.getItemProperty(columnProperty).getValue());
+                Component add = (Component) item.getItemProperty(columnProperty).getValue();
+                addItemIdComponentMapping(itemId, add);
             }
+
         }
 
         @Override
@@ -173,39 +206,57 @@ public class ComponentRendererComponentStore {
             if (event instanceof Container.Indexed.ItemAddEvent) {
                 handleItemAdd((Container.Indexed.ItemAddEvent) event);
             } else if (event instanceof Container.Indexed.ItemRemoveEvent) {
-
                 handleItemRemove((Container.Indexed.ItemRemoveEvent) event);
             }
 
         }
 
+
+        /**
+         * Removes all components associated with removed item-ids.
+         *
+         * @param itemRemoveEvent the item-remove-event
+         */
         private void handleItemRemove(Container.Indexed.ItemRemoveEvent itemRemoveEvent) {
-            int endItemId = (Integer) itemRemoveEvent.getFirstItemId() + itemRemoveEvent.getRemovedItemsCount();
-            for (int currentId = (Integer) itemRemoveEvent.getFirstItemId(); currentId < endItemId; currentId++) {
+
+            int startItemId = (Integer) itemRemoveEvent.getFirstItemId();
+            int endItemId = startItemId + itemRemoveEvent.getRemovedItemsCount();
+
+            for (int currentId = startItemId; currentId < endItemId; currentId++) {
+
+                // retrieve components for the itemid and mark for removal
                 Set<Component> removeComponents = itemIdComponentMapping.get(currentId);
                 if (removeComponents != null) {
                     for (Component component : removeComponents) {
                         if (component != null) {
-                            removeComponent(component);
+                            markForRemoval(component);
                         }
                     }
                     itemIdComponentMapping.remove(currentId);
                 }
             }
+            removeMarkedComponents();
         }
 
+        /**
+         * Associates all added item-ids with the corresponding components.
+         *
+         * @param itemAddEvent the item-add-event
+         */
         private void handleItemAdd(Container.Indexed.ItemAddEvent itemAddEvent) {
-            int endItemId = (Integer) itemAddEvent.getFirstItemId() + itemAddEvent.getAddedItemsCount();
-            for (int currentId = (Integer) itemAddEvent.getFirstItemId(); currentId < endItemId; currentId++) {
+            int startItemId = (Integer) itemAddEvent.getFirstItemId();
+            int endItemId = startItemId + itemAddEvent.getAddedItemsCount();
+            for (int currentId = startItemId; currentId < endItemId; currentId++) {
                 addRowComponents(currentId, itemAddEvent.getContainer().getItem(currentId));
             }
         }
     }
 
+
     /**
      * Updates the Set of columns which contain Components on property changes.
      */
-    private class ComponentColumnContainerPropertySetChangeListener implements Container.PropertySetChangeListener {
+    private class ContainerPropertySetChangeListener implements Container.PropertySetChangeListener {
 
         @Override
         public void containerPropertySetChange(Container.PropertySetChangeEvent event) {
@@ -216,17 +267,24 @@ public class ComponentRendererComponentStore {
                     componentColumnPropertyIds.add(containerPropertyId);
                 }
             }
+
         }
     }
 
-    private class ItemIdComponentMappingValueChangeListener implements Property.ValueChangeListener {
+    /**
+     * When a valuechange-event occurs on a column of type Component,
+     * then adds the component to the item-id component tracking.
+     */
+    private class ItemIdComponentMappingListener implements Property.ValueChangeListener {
+
+        public static final String FIELD_ITEM_ID = "itemId";
 
         @Override
         public void valueChange(Property.ValueChangeEvent event) {
             if (event.getProperty().getType() == Component.class) {
                 try {
                     Object eventSource = ((EventObject) event).getSource();
-                    Object itemId = FieldUtils.readField(eventSource, "itemId", true);
+                    Object itemId = FieldUtils.readField(eventSource, FIELD_ITEM_ID, true);
                     addItemIdComponentMapping(itemId, (Component) event.getProperty().getValue());
                 } catch (IllegalAccessException e) {
                     // if reading the event field fails do nothing

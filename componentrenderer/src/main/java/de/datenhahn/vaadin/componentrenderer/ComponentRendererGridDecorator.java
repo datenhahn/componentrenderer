@@ -39,7 +39,7 @@ import static com.google.gwt.thirdparty.guava.common.collect.Iterators.addAll;
  */
 public class ComponentRendererGridDecorator<T extends Grid> implements MethodInterceptor {
 
-    private ComponentRendererComponentStore componentRendererComponentStore;
+    private ComponentRendererComponentTracker componentRendererComponentTracker;
 
     /**
      * Decorates a subclass of Grid to add the ComponentRenderer functionality.
@@ -62,7 +62,7 @@ public class ComponentRendererGridDecorator<T extends Grid> implements MethodInt
 
         T enhancedGrid = myGridClass.cast(gridEnhancer.create());
 
-        componentRendererComponentStore = ComponentRendererComponentStore.linkWith(enhancedGrid);
+        componentRendererComponentTracker = ComponentRendererComponentTracker.linkWith(enhancedGrid);
 
         return enhancedGrid;
     }
@@ -90,17 +90,17 @@ public class ComponentRendererGridDecorator<T extends Grid> implements MethodInt
             LinkedHashSet<Component> allComponents = new LinkedHashSet<Component>();
 
             addAll(allComponents, iterator);
-            allComponents.addAll(componentRendererComponentStore.getRendererComponents());
+            allComponents.addAll(componentRendererComponentTracker.getRendererComponents());
 
             return allComponents.iterator();
 
         } else if ("createComponentRenderer".equals(method.getName())) {
-            return componentRendererComponentStore.createComponentRenderer();
+            return componentRendererComponentTracker.createComponentRenderer();
 
         } else if ("setContainerDataSource".equals(method.getName())) {
 
             methodProxy.invokeSuper(decoratedInstance, parameters);
-            componentRendererComponentStore.addContainerChangeListeners();
+            componentRendererComponentTracker.addContainerChangeListeners();
             return null;
 
         } else if ("forceReRender".equals(method.getName())) {

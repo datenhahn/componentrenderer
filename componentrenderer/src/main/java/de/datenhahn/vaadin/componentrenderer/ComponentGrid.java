@@ -16,9 +16,11 @@ package de.datenhahn.vaadin.componentrenderer;
 import com.vaadin.data.Container;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Grid;
+import com.vaadin.ui.UI;
 
 import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.UUID;
 
 import static com.google.gwt.thirdparty.guava.common.collect.Iterators.addAll;
 
@@ -31,10 +33,10 @@ import static com.google.gwt.thirdparty.guava.common.collect.Iterators.addAll;
  */
 public class ComponentGrid extends Grid implements ComponentRendererProvider, GridUtilityMethods {
 
-    private final ComponentRendererComponentStore componentRendererComponentStore;
+    private final ComponentRendererComponentTracker componentRendererComponentTracker;
 
     public ComponentGrid() {
-        componentRendererComponentStore = ComponentRendererComponentStore.linkWith(this);
+        componentRendererComponentTracker = ComponentRendererComponentTracker.linkWith(this);
     }
 
     @Override
@@ -43,7 +45,7 @@ public class ComponentGrid extends Grid implements ComponentRendererProvider, Gr
         LinkedHashSet<Component> allComponents = new LinkedHashSet<Component>();
 
         addAll(allComponents, super.iterator());
-        allComponents.addAll(componentRendererComponentStore.getRendererComponents());
+        allComponents.addAll(componentRendererComponentTracker.getRendererComponents());
 
         return allComponents.iterator();
     }
@@ -51,16 +53,17 @@ public class ComponentGrid extends Grid implements ComponentRendererProvider, Gr
     @Override
     public void setContainerDataSource(Container.Indexed container) {
         super.setContainerDataSource(container);
-        componentRendererComponentStore.addContainerChangeListeners();
+        componentRendererComponentTracker.addContainerChangeListeners();
     }
 
     @Override
     public ComponentRenderer createComponentRenderer() {
-        return componentRendererComponentStore.createComponentRenderer();
+        return componentRendererComponentTracker.createComponentRenderer();
     }
 
     @Override
     public void forceReRender() {
         setCellStyleGenerator(getCellStyleGenerator());
     }
+
 }
