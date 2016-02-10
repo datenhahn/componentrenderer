@@ -5,15 +5,15 @@
 	<groupId>de.datenhahn.vaadin</groupId>
 	<artifactId>componentrenderer</artifactId>
 	<packaging>jar</packaging>
-	<version>0.1.4</version>
+	<version>0.1.5</version>
 	<name>ComponentRenderer</name>
 
 	<properties>
 		<vaadin.version>7.6.2</vaadin.version>
 		<vaadin.plugin.version>${vaadin.version}</vaadin.plugin.version>
 		<jetty.plugin.version>9.2.3.v20140905</jetty.plugin.version>
-		<project.source.version>1.8</project.source.version>
-		<project.target.version>1.8</project.target.version>
+		<project.source.version>1.7</project.source.version>
+		<project.target.version>1.7</project.target.version>
 		<project.encoding>UTF-8</project.encoding>
 		<!-- ZIP Manifest fields -->
 		<Implementation-Version>${project.version}</Implementation-Version>
@@ -76,17 +76,6 @@
 			<groupId>com.vaadin</groupId>
 			<artifactId>vaadin-client</artifactId>
 			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>cglib</groupId>
-			<artifactId>cglib</artifactId>
-			<version>3.2.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-lang3</artifactId>
-			<version>3.4</version>
 		</dependency>
 
 	</dependencies>

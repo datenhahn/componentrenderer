@@ -20,6 +20,7 @@ import com.vaadin.data.Item;
 import com.vaadin.data.Property;
 import com.vaadin.data.util.GeneratedPropertyContainer;
 import com.vaadin.data.util.PropertyValueGenerator;
+import com.vaadin.event.ItemClickEvent;
 import com.vaadin.event.MouseEvents;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.ThemeResource;
@@ -114,8 +115,11 @@ public class ComponentRendererDemoUI extends UI {
         myGrid.setColumnReorderingAllowed(true);
 
 
-        myGrid.addItemClickListener(event -> {
-            myGrid.setDetailsVisible(event.getItemId(), true);
+        myGrid.addItemClickListener(new ItemClickEvent.ItemClickListener() {
+            @Override
+            public void itemClick(ItemClickEvent event) {
+                myGrid.setDetailsVisible(event.getItemId(), true);
+            }
         });
 
         myGrid.addColumn(COL_ARROWS, Component.class).setRenderer(new ComponentRenderer()).setWidth(80);
