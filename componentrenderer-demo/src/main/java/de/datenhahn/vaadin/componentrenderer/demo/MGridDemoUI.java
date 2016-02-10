@@ -87,8 +87,8 @@ public class MGridDemoUI extends UI {
 
         mgrid.setRows(createDummyData());
 
-        mgrid.addGeneratedColumn("food", cust -> createFoodSelector(mgrid, cust));
-        mgrid.addGeneratedColumn("foodIcon", cust -> createFoodIcon(cust));
+        mgrid.addComponentColumn("food", cust -> createFoodSelector(mgrid, cust));
+        mgrid.addComponentColumn("foodIcon", cust -> createFoodIcon(cust));
         mgrid.withProperties("id", "firstName", "lastName", "food", "foodIcon");
 
         layout.addComponent(mgrid);

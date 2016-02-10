@@ -18,7 +18,7 @@ public class MGrid2<T> extends MGrid<T> {
         setContainerDataSource(gpc);
     }
 
-    public MGrid2<T> addGeneratedColumn(Object propertyId, MGenerator<T> generator) {
+    public MGrid2<T> addComponentColumn(Object propertyId, MGenerator<T> generator) {
         if(gpc == null) {
             initGpc();
         }
