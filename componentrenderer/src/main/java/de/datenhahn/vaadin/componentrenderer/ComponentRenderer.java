@@ -13,58 +13,71 @@
  */
 package de.datenhahn.vaadin.componentrenderer;
 
+import com.vaadin.data.Item;
+import com.vaadin.server.ClientConnector;
+import com.vaadin.server.communication.data.DataGenerator;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Grid;
-import de.datenhahn.vaadin.componentrenderer.client.connectors.ComponentRendererServerRpc;
 import elemental.json.Json;
+import elemental.json.JsonObject;
 import elemental.json.JsonValue;
+
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * A renderer for vaadin components.
  *
  * @author Jonas Hahn (jonas.hahn@datenhahn.de)
  */
-public class ComponentRenderer extends Grid.AbstractRenderer<Component> {
+public class ComponentRenderer extends Grid.AbstractRenderer<Component> implements DataGenerator {
 
-    private final ComponentRendererComponentTracker componentStore;
+    Set<Component> components = new HashSet<Component>();
 
-    public ComponentRenderer(ComponentRendererComponentTracker componentStore) {
+    public ComponentRenderer() {
         super(Component.class, null);
-        this.componentStore = componentStore;
-        registerRpc(new MyComponentRendererServerRpc(componentStore));
     }
 
     @Override
     public JsonValue encode(Component component) {
-        doComponentBookkeeping(component);
+        addComponentToGrid(component);
+        components.add(component);
         return Json.create(component.getConnectorId());
     }
 
-    private void doComponentBookkeeping(Component component) {
-        componentStore.addComponent(component);
-        componentStore.unmarkForRemoval(component);
-        componentStore.removeMarkedComponents();
-    }
+    @Override
+    public void setParent(ClientConnector parent) {
 
-    private class MyComponentRendererServerRpc implements ComponentRendererServerRpc {
-
-        private ComponentRendererComponentTracker componentStore;
-
-        public MyComponentRendererServerRpc(ComponentRendererComponentTracker componentStore) {
-            this.componentStore = componentStore;
-        }
-
-        @Override
-        public void removeComponentConnectors(final String[] connectorIds) {
-
-            for (String connectorId : connectorIds) {
-                componentStore.markForRemoval((Component) getUI().getConnectorTracker().getConnector(connectorId));
+        if (getParent() != null && parent == null) {
+            for (Component c : components) {
+                removeComponentFromGrid(c);
             }
         }
 
-
+        super.setParent(parent);
     }
 
+
+    @Override
+    public void generateData(Object itemId, Item item, JsonObject jsonObject) {
+        // noop
+    }
+
+    @Override
+    public void destroyData(Object itemId) {
+        Item item = getParentGrid().getContainerDataSource().getItem(itemId);
+
+        Collection<?> propertyIds = item.getItemPropertyIds();
+
+        for(Object propertyId : propertyIds) {
+            if(item.getItemProperty(propertyId).getType().isAssignableFrom(Component.class)) {
+                Component component = (Component)item.getItemProperty(propertyId).getValue();
+                components.remove(component);
+                removeComponentFromGrid(component);
+            }
+        }
+    }
 }
 
 

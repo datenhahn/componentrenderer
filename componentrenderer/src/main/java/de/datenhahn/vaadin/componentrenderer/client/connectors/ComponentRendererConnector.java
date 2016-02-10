@@ -29,12 +29,6 @@ import elemental.json.JsonValue;
 @Connect(de.datenhahn.vaadin.componentrenderer.ComponentRenderer.class)
 public class ComponentRendererConnector extends AbstractRendererConnector<ComponentConnector> {
 
-    private ConnectorMap connectorMap;
-    
-    public ComponentRendererServerRpc getRpc() {
-        return getRpcProxy(ComponentRendererServerRpc.class);
-    }
-
     /**
      * Retrieve the renderer and link it with its connector.
      *
@@ -42,10 +36,7 @@ public class ComponentRendererConnector extends AbstractRendererConnector<Compon
      */
     @Override
     public ComponentRenderer getRenderer() {
-        connectorMap = ConnectorMap.get(getConnection());
-        ComponentRenderer renderer = (ComponentRenderer) super.getRenderer();
-        renderer.setConnector(this);
-        return renderer;
+        return (ComponentRenderer) super.getRenderer();
     }
 
     /**
@@ -56,10 +47,7 @@ public class ComponentRendererConnector extends AbstractRendererConnector<Compon
      */
     @Override
     public ComponentConnector decode(JsonValue jsonConnectorId) {
-        return lookupConnector(jsonConnectorId.toString());
+        return (ComponentConnector) ConnectorMap.get(getConnection()).getConnector(jsonConnectorId.toString());
     }
 
-    private ComponentConnector lookupConnector(String connectorId) {
-        return (ComponentConnector) connectorMap.getConnector(connectorId);
-    }
 }

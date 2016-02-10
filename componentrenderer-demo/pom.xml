@@ -8,11 +8,11 @@
 	<version>0.1.3</version>
 	<name>ComponentRenderer Demo</name>
 	<properties>
-		<vaadin.version>7.5.9</vaadin.version>
+		<vaadin.version>7.6.2</vaadin.version>
 		<vaadin.plugin.version>${vaadin.version}</vaadin.plugin.version>
 		<jetty.plugin.version>9.2.3.v20140905</jetty.plugin.version>
-		<project.source.version>1.6</project.source.version>
-		<project.target.version>1.6</project.target.version>
+		<project.source.version>1.8</project.source.version>
+		<project.target.version>1.8</project.target.version>
 		<project.encoding>UTF-8</project.encoding>
 	</properties>
 

@@ -3,9 +3,11 @@
 .demotheme {
   @include valo;
 
+  $row_height: 62px;
+
   .v-grid-body .v-grid-cell {
-    height: 120px;
-    padding-top: 7px;
+    height: $row_height;
+    line-height: $row_height;
   }
 
   .green {
@@ -16,6 +18,12 @@
   .red {
     color: rgba(255, 38, 0, 0.6);
     font-size: 200%;
+  }
+
+  .v-grid-cell > div.component-cell {
+    display: flex;
+    align-items: center;
+    justify-content: left;
   }
 
 }
