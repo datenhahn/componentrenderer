@@ -24,6 +24,7 @@ import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.*;
+import de.datenhahn.vaadin.componentrenderer.grid.ComponentGrid;
 import org.fluttercode.datafactory.impl.DataFactory;
 
 import javax.servlet.annotation.WebServlet;

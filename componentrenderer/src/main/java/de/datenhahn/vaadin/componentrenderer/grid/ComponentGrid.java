@@ -1,4 +1,4 @@
-package de.datenhahn.vaadin.componentrenderer.demo;
+package de.datenhahn.vaadin.componentrenderer.grid;
 
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.data.util.GeneratedPropertyContainer;

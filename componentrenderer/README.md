@@ -8,18 +8,19 @@ Renders standard Vaadin components in the grid.
  * Components can be combined in layouts (e.g. multiple images in a horizontal layout)
  * Works with standard colums and generated columns
  * Standard ValueChange/ClickListeners
- 
-## Status Experimental
 
- * All components for all rows are held in memory, which is not as bad as it sounds and works well for smaller grids,
-   but may not work for bigger grids
+## Limitations
+
+ * components should have fixed sizes, otherwise all browsers expect Chrome do lots of measurements
+   and relayout because of these which makes everything quite slow
+ 
+## Status: Pre-Alpha
+
+ * Uses generated property container to have on-the-fly generation of components
  * The renderer is not tested well in production scenarios, please open issues if you encounter difficulties
  * Updates from the serverside seem not to update the UI (the workaround is to return different component instances
    e.g. in a generated column (see the details row arrows in the demo-ui)
- * When removing rows from the container by a button click, a rerender of the grid was necessary, otherwise
-   there were rendering problems (some buttons vanishing) (see the forceReRender function)
- * A cglib decorator or a grid subclass is necessary to override two functions, that may have side-effects
-   I didn't take into account
+ * When removing rows from the container by a button click, a rerender of the grid was necessary, otherwise the row striping (the alternating colors of the row) is not correct
    
 ## Build
 
@@ -45,28 +46,17 @@ Have a look at the demo app, you can start it with:
     cd componentrenderer-demo
     mvn jetty:run
     
-### Activate the ComponentRenderer Extension
+### The ComponentGrid
     
-Decorate your own Grid subclass
+    * The use of the typed Component Grid subclass is strongly recommended, but not mandatory.
+    * The use of value component columns is not recommended anymore
 
-    ComponentRendererGridDecorator<Grid> foo = new ComponentRendererGridDecorator<Grid>();
-    final Grid myGrid = (foo).decorate(Grid.class);
-    
-Or use the ComponentGrid subclass delivered in the package
-
-    final ComponentGrid myGrid = new ComponentGrid();
-    
-Alternativley you can add the methods to your own subclass
 
 ### Add a component column
 
-    myGrid.addColumn(COL_FONT_LABEL_1, Component.class).setRenderer(((ComponentRendererProvider) myGrid).createComponentRenderer());
+The use of Java 8 is recommended but not mandatory.
 
-### Or generate one
-
-    GeneratedPropertyContainer generatedPropertyContainer = new GeneratedPropertyContainer(myGrid.getContainerDataSource());
-    myGrid.setContainerDataSource(generatedPropertyContainer);
-    generatedPropertyContainer.addGeneratedProperty(COL_DELETE, new DeleteButtonValueGenerator(myGrid));
-   
+    grid.addComponentColumn(FOOD, cust -> createFoodSelector(grid, cust));
+    grid.addComponentColumn(FOOD_ICON, cust -> createFoodIcon(cust));
 
 		

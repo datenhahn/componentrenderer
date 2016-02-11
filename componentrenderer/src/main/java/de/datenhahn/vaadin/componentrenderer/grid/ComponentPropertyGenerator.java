@@ -1,4 +1,4 @@
-package de.datenhahn.vaadin.componentrenderer.demo;
+package de.datenhahn.vaadin.componentrenderer.grid;
 
 import com.vaadin.data.Item;
 import com.vaadin.data.sort.SortOrder;
