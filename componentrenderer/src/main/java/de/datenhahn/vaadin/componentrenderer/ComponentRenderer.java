@@ -44,8 +44,12 @@ public class ComponentRenderer extends Grid.AbstractRenderer<Component> implemen
     public JsonValue encode(Component component) {
 
         // 1: add component to grid, so connector id can be encoded
-        addComponentToGrid(component);
-        return Json.create(component.getConnectorId());
+        if(component != null) {
+            addComponentToGrid(component);
+            return Json.create(component.getConnectorId());
+        } else {
+            return Json.createNull();
+        }
     }
 
     @Override
@@ -98,7 +102,9 @@ public class ComponentRenderer extends Grid.AbstractRenderer<Component> implemen
     public void destroyData(Object itemId) {
         if (components.containsKey(itemId)) {
             for (Component component : components.get(itemId)) {
-                removeComponentFromGrid(component);
+                if(component != null) {
+                    removeComponentFromGrid(component);
+                }
             }
             components.remove(itemId);
         }
