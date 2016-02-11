@@ -5,7 +5,7 @@
 	<groupId>de.datenhahn.vaadin</groupId>
 	<artifactId>componentrenderer</artifactId>
 	<packaging>jar</packaging>
-	<version>0.1.5</version>
+	<version>0.2.0</version>
 	<name>ComponentRenderer</name>
 
 	<properties>

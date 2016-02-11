@@ -18,11 +18,12 @@ import com.vaadin.server.ClientConnector;
 import com.vaadin.server.communication.data.DataGenerator;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Grid;
+import com.vaadin.ui.UI;
 import elemental.json.Json;
 import elemental.json.JsonObject;
 import elemental.json.JsonValue;
 
-import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -33,7 +34,7 @@ import java.util.Set;
  */
 public class ComponentRenderer extends Grid.AbstractRenderer<Component> implements DataGenerator {
 
-    Set<Component> components = new HashSet<Component>();
+    HashMap<Object, Set<Component>> components = new HashMap<Object, Set<Component>>();
 
     public ComponentRenderer() {
         super(Component.class, null);
@@ -41,8 +42,9 @@ public class ComponentRenderer extends Grid.AbstractRenderer<Component> implemen
 
     @Override
     public JsonValue encode(Component component) {
+
+        // 1: add component to grid, so connector id can be encoded
         addComponentToGrid(component);
-        components.add(component);
         return Json.create(component.getConnectorId());
     }
 
@@ -50,33 +52,57 @@ public class ComponentRenderer extends Grid.AbstractRenderer<Component> implemen
     public void setParent(ClientConnector parent) {
 
         if (getParent() != null && parent == null) {
-            for (Component c : components) {
-                removeComponentFromGrid(c);
-            }
+            for (Set<Component> rowComponents : components.values())
+                for (Component c : rowComponents) {
+                    removeComponentFromGrid(c);
+                }
         }
 
         super.setParent(parent);
+
+        // VERY IMPORTANT: registers the DataGenerator extension
+        extend(getParentGrid());
     }
 
 
+    private void putComponent(Object itemId, Component component) {
+
+        if (!components.containsKey(itemId)) {
+            components.put(itemId, new HashSet<Component>());
+        }
+
+        components.get(itemId).add(component);
+    }
+
     @Override
     public void generateData(Object itemId, Item item, JsonObject jsonObject) {
-        // noop
+
+        // destroy all previous data for this row, sometimes it happens that
+        // destroyData is not called before generateData is called
+        destroyData(itemId);
+
+        for (String key : jsonObject.getObject("d").keys()) {
+            Class columnType = getParentGrid().getContainerDataSource().getType(getColumn(key).getPropertyId());
+            if (columnType.isAssignableFrom(Component.class)) {
+                // 2: VERY IMPORTANT get the component from the connector tracker !!!
+                //    if you use a GeneratedPropertyContainer and call get Value you will
+                //    get a different component
+                Component current = (Component) UI.getCurrent().getConnectorTracker().getConnector(jsonObject.getObject("d").getString(key));
+                putComponent(itemId, current);
+            }
+        }
+
     }
 
     @Override
     public void destroyData(Object itemId) {
-        Item item = getParentGrid().getContainerDataSource().getItem(itemId);
-
-        Collection<?> propertyIds = item.getItemPropertyIds();
-
-        for(Object propertyId : propertyIds) {
-            if(item.getItemProperty(propertyId).getType().isAssignableFrom(Component.class)) {
-                Component component = (Component)item.getItemProperty(propertyId).getValue();
-                components.remove(component);
+        if (components.containsKey(itemId)) {
+            for (Component component : components.get(itemId)) {
                 removeComponentFromGrid(component);
             }
+            components.remove(itemId);
         }
+
     }
 }
 
