@@ -13,6 +13,7 @@
  */
 package de.datenhahn.vaadin.componentrenderer.client.connectors;
 
+import com.vaadin.annotations.StyleSheet;
 import com.vaadin.client.ComponentConnector;
 import com.vaadin.client.ConnectorMap;
 import com.vaadin.client.connectors.AbstractRendererConnector;
@@ -26,6 +27,7 @@ import elemental.json.JsonValue;
  * @author Jonas Hahn (jonas.hahn@datenhahn.de)
  * @see ComponentRenderer
  */
+@StyleSheet("componentrenderer.css")
 @Connect(de.datenhahn.vaadin.componentrenderer.ComponentRenderer.class)
 public class ComponentRendererConnector extends AbstractRendererConnector<ComponentConnector> {
 

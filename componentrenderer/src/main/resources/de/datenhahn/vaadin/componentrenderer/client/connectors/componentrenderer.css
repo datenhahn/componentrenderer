@@ -1,0 +1,6 @@
+.v-grid-cell > div.component-cell {
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    box-sizing: border-box;
+}
