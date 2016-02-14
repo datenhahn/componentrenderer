@@ -1,16 +1,40 @@
 package de.datenhahn.vaadin.componentrenderer.demo;
 
+import com.vaadin.server.ThemeResource;
+
 public class Customer {
 
     enum Food {
         HAMBURGER, FISH, VEGETABLES
     }
+    public static final String ID = "id";
     private int id;
+
+    public static final String CAR_RATING = "carRating";
     private int carRating;
+
+    public static final String OVERALL_RATING = "overallRating";
     private int overallRating;
+
+    public static final String FIRST_NAME = "firstName";
     private String firstName;
+
+    public static final String LAST_NAME = "lastName";
     private String lastName;
+
+    public static final String FOOD = "food";
     private Food food;
+
+    public static final String PHOTO = "photo";
+    private ThemeResource photo;
+
+    public ThemeResource getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(ThemeResource photo) {
+        this.photo = photo;
+    }
 
     public Food getFood() {
         return food;

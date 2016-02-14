@@ -110,6 +110,31 @@ the current focus. The ComponentGrid's <tt>refresh()</tt> function automatically
 In case you wonder <tt>grid.setCellStyleGenerator(grid.getCellStyleGenerator());</tt> is a nasty hack to force the
 grid to rerender.
 
+# Server-Side Memory Use
+
+I used jvisualvm to check if the components were released correctly. Below you find the screenshots.
+
+## Initial Load
+
+The grids initially displayed rows are loaded, memory use about 50MB.
+
+<img src="./doc/jvisualvm/after_initial_load.jpg">
+
+## Scroll to row 1000 (ARROW_DOWN key) before GC
+
+During scrolling we create a lot of objects, memory use before GC about 400MB.
+
+<img src="./doc/jvisualvm/scroll_to_1000_before_gc.jpg">
+
+## Scroll to row 1000 (ARROW_DOWN key) after GC
+
+But the generated objects do not stay in heap, but can be garbage collected which we can
+observe here. After GC again only about 50MB of memory is used. The number of instances
+left (100) is the amount the grid's RpcDataSource holds in its row-cache.
+
+<img src="./doc/jvisualvm/scroll_to_1000_after_gc.jpg">
+
+
 # Internals of the renderer explained
 
 Here you find a description how the renderer works. You won't need that to use the renderer, but

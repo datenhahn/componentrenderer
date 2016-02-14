@@ -15,24 +15,14 @@ package de.datenhahn.vaadin.componentrenderer.demo;
 
 import com.vaadin.data.Item;
 import com.vaadin.data.sort.SortOrder;
-import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.data.util.GeneratedPropertyContainer;
 import com.vaadin.data.util.PropertyValueGenerator;
-import com.vaadin.event.ShortcutAction;
-import com.vaadin.event.ShortcutListener;
-import com.vaadin.server.FontAwesome;
-import com.vaadin.server.ThemeResource;
-import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.*;
 import de.datenhahn.vaadin.componentrenderer.ComponentCellKeyExtension;
 import de.datenhahn.vaadin.componentrenderer.ComponentRenderer;
 import de.datenhahn.vaadin.componentrenderer.DetailsKeysExtension;
 import de.datenhahn.vaadin.componentrenderer.FocusPreserveExtension;
-import org.fluttercode.datafactory.impl.DataFactory;
-
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * Demonstrates the use of the typed ComponentGrid
@@ -41,35 +31,15 @@ import java.util.List;
  */
 public class ClassicGridTab extends VerticalLayout {
 
-    private static final String FOOD = "food";
-    private static final String FOOD_ICON = "foodIcon";
-    private static final String RATING = "rating";
-    private static final String DELETE = "delete";
-    private static final String ID = "id";
-    private static final String FIRST_NAME = "firstName";
-    private static final String LAST_NAME = "lastName";
-    private static final String DETAILS_ICONS = "detailsIcons";
-    private final DataFactory testData = new DataFactory();
-    private static final int ROW_HEIGHT = 40;
+    private static final String GENERATED_FOOD_ICON = "foodIcon";
+    private static final String GENERATED_RATING = "rating";
+    private static final String GENERATED_DELETE = "delete";
+    private static final String GENERATED_DETAILS_ICONS = "detailsIcons";
+
     private FocusPreserveExtension focusPreserveExtension;
+
     public ClassicGridTab() {
         init();
-    }
-
-    private List<Customer> createDummyData() {
-        LinkedList<Customer> list = new LinkedList<>();
-
-        for (int i = 1; i <= 10000; i++) {
-
-            Customer customer = new Customer();
-            customer.setId(i);
-            customer.setFirstName(testData.getFirstName());
-            customer.setLastName(testData.getLastName());
-            customer.setFood(testData.getItem(Customer.Food.values()));
-
-            list.add(customer);
-        }
-        return list;
     }
 
     private void init() {
@@ -97,23 +67,17 @@ public class ClassicGridTab extends VerticalLayout {
         grid.setContainerDataSource(gpc);
 
         // Load the data
-        bc.addAll(createDummyData());
+        bc.addAll(CustomerProvider.createDummyData());
 
         // Initialize DetailsGenerator (Caution: the DetailsGenerator is set to null
         // when grid#setContainerDatasource is called, so make sure you call setDetailsGenerator
         // after setContainerDatasource
-        grid.setDetailsGenerator(rowReference -> {
-            VerticalLayout layout = new VerticalLayout();
-            layout.setHeight(100, Unit.PIXELS);
-            layout.addComponent(new Label(((Customer) rowReference.getItemId()).getFirstName()));
-            return layout;
+        grid.setDetailsGenerator(new CustomerDetailsGenerator());
 
-        });
-
-        gpc.addGeneratedProperty(FOOD, new PropertyValueGenerator<Component>() {
+        gpc.addGeneratedProperty(Customer.FOOD, new PropertyValueGenerator<Component>() {
             @Override
             public Component getValue(Item item, Object itemId, Object propertyId) {
-                return createFoodSelector(grid, (Customer) itemId);
+                return ViewComponents.createFoodSelector(grid, focusPreserveExtension, (Customer) itemId);
             }
 
             @Override
@@ -133,12 +97,12 @@ public class ClassicGridTab extends VerticalLayout {
         });
 
         // Don't forget to set the ComponentRenderer AFTER adding the column
-        grid.getColumn(FOOD).setRenderer(new ComponentRenderer());
+        grid.getColumn(Customer.FOOD).setRenderer(new ComponentRenderer());
 
-        gpc.addGeneratedProperty(FOOD_ICON, new PropertyValueGenerator<Component>() {
+        gpc.addGeneratedProperty(GENERATED_FOOD_ICON, new PropertyValueGenerator<Component>() {
             @Override
             public Component getValue(Item item, Object itemId, Object propertyId) {
-                return createFoodIcon((Customer) itemId);
+                return ViewComponents.createFoodIcon((Customer) itemId);
             }
 
             @Override
@@ -158,12 +122,12 @@ public class ClassicGridTab extends VerticalLayout {
         });
 
         // Don't forget to set the ComponentRenderer AFTER adding the column
-        grid.getColumn(FOOD_ICON).setRenderer(new ComponentRenderer());
+        grid.getColumn(GENERATED_FOOD_ICON).setRenderer(new ComponentRenderer());
 
-        gpc.addGeneratedProperty(RATING, new PropertyValueGenerator<Component>() {
+        gpc.addGeneratedProperty(GENERATED_RATING, new PropertyValueGenerator<Component>() {
             @Override
             public Component getValue(Item item, Object itemId, Object propertyId) {
-                return createRating((Customer) itemId);
+                return ViewComponents.createRating((Customer) itemId);
             }
 
             @Override
@@ -174,12 +138,12 @@ public class ClassicGridTab extends VerticalLayout {
         });
 
         // Don't forget to set the ComponentRenderer AFTER adding the column
-        grid.getColumn(RATING).setRenderer(new ComponentRenderer());
+        grid.getColumn(GENERATED_RATING).setRenderer(new ComponentRenderer());
 
-        gpc.addGeneratedProperty(DELETE, new PropertyValueGenerator<Component>() {
+        gpc.addGeneratedProperty(GENERATED_DELETE, new PropertyValueGenerator<Component>() {
             @Override
             public Component getValue(Item item, Object itemId, Object propertyId) {
-                return createDeleteButton(grid, bc, (Customer) itemId);
+                return ViewComponents.createDeleteButton(grid, focusPreserveExtension, bc, (Customer) itemId);
             }
 
             @Override
@@ -190,12 +154,12 @@ public class ClassicGridTab extends VerticalLayout {
         });
 
         // Don't forget to set the ComponentRenderer AFTER adding the column
-        grid.getColumn(DELETE).setRenderer(new ComponentRenderer());
+        grid.getColumn(GENERATED_DELETE).setRenderer(new ComponentRenderer());
 
-        gpc.addGeneratedProperty(DETAILS_ICONS, new PropertyValueGenerator<Component>() {
+        gpc.addGeneratedProperty(GENERATED_DETAILS_ICONS, new PropertyValueGenerator<Component>() {
             @Override
             public Component getValue(Item item, Object itemId, Object propertyId) {
-                return createDetailsIcons(grid, (Customer) itemId);
+                return ViewComponents.createDetailsIcons(grid, (Customer) itemId);
             }
 
             @Override
@@ -206,122 +170,20 @@ public class ClassicGridTab extends VerticalLayout {
         });
 
         // Don't forget to set the ComponentRenderer AFTER adding the column
-        grid.getColumn(DETAILS_ICONS).setRenderer(new ComponentRenderer());
+        grid.getColumn(GENERATED_DETAILS_ICONS).setRenderer(new ComponentRenderer());
 
 
         // always display the details column
         grid.setFrozenColumnCount(1);
 
-        grid.setColumns(DETAILS_ICONS, ID, FIRST_NAME, LAST_NAME, FOOD, FOOD_ICON, RATING, DELETE);
+        grid.setColumns(GENERATED_DETAILS_ICONS, Customer.ID, Customer.FIRST_NAME, Customer.LAST_NAME, Customer.FOOD, GENERATED_FOOD_ICON, GENERATED_RATING, GENERATED_DELETE);
 
         addComponent(grid);
         setExpandRatio(grid, 1.0f);
     }
 
-    private Image createDetailsIcons(Grid grid, Customer customer) {
-        final Image imageDown = new Image("", new ThemeResource("../demotheme/img/caret-down.png"));
-        final Image imageUp = new Image("", new ThemeResource("../demotheme/img/caret-up.png"));
-        imageDown.setHeight(32, Unit.PIXELS);
-        imageDown.setWidth(32, Unit.PIXELS);
-        imageUp.setHeight(32, Unit.PIXELS);
-        imageDown.setWidth(32, Unit.PIXELS);
-
-        imageDown.addShortcutListener(new ShortcutListener("enter", ShortcutAction.KeyCode.ENTER, null) {
-            @Override
-            public void handleAction(Object sender, Object target) {
-                if (sender == imageDown || sender == imageUp) {
-                    Notification.show("Shortcut captured");
-                    grid.setDetailsVisible(customer, !grid.isDetailsVisible(customer));
-                }
-            }
-        });
-        imageDown.addClickListener(event -> grid.setDetailsVisible(customer, true));
-        imageUp.addClickListener(event -> grid.setDetailsVisible(customer, false));
-
-        if (grid.isDetailsVisible(customer)) {
-            return imageUp;
-        } else {
-            return imageDown;
-        }
-    }
-
-    private Component createFoodIcon(Customer cust) {
-        Label label = new Label(FontAwesome.HOURGLASS_2.getHtml(), ContentMode.HTML);
-
-        label.setHeight(32, Unit.PIXELS);
-        label.setWidth(50, Unit.PIXELS);
-
-        if (cust.getFood() == Customer.Food.HAMBURGER) {
-            label.setValue(FontAwesome.AMBULANCE.getHtml());
-        }
-
-        if (cust.getFood() == Customer.Food.FISH) {
-            label.setValue(FontAwesome.HEART.getHtml());
-        }
-
-        if (cust.getFood() == Customer.Food.VEGETABLES) {
-            label.setValue(FontAwesome.SUN_O.getHtml());
-        }
-
-        return label;
-
-    }
-
-    private Button createDeleteButton(Grid grid, BeanItemContainer<Customer> beanItemContainer, Customer customer) {
-        Button delete = new Button(DELETE, event -> {
-            beanItemContainer.removeItem(customer);
-            focusPreserveExtension.saveFocus();
-            grid.setCellStyleGenerator(grid.getCellStyleGenerator());
-            focusPreserveExtension.restoreFocus();
-
-        });
-        delete.setHeight(ROW_HEIGHT, Unit.PIXELS);
-        delete.setWidth(150, Unit.PIXELS);
-        return delete;
-    }
 
 
-    private CssLayout createRating(Customer customer) {
-        CssLayout layout = new CssLayout();
-        layout.setHeight(ROW_HEIGHT, Unit.PIXELS);
-        layout.setWidth(150, Unit.PIXELS);
-
-        Label overallRating = new Label(FontAwesome.STAR.getHtml(), ContentMode.HTML);
-        overallRating.addStyleName("green");
-        overallRating.setDescription("Very good : " + testData.getNumberBetween(90, 100) + "% Chance");
-        overallRating.setWidthUndefined();
-        overallRating.setWidth(40, Unit.PIXELS);
-        overallRating.setHeight(ROW_HEIGHT, Unit.PIXELS);
-        layout.addComponent(overallRating);
-
-
-        Label carRating = new Label(FontAwesome.CAR.getHtml(), ContentMode.HTML);
-        carRating.addStyleName("red");
-        carRating.setDescription("Unlikely : " + testData.getNumberBetween(1, 15) + "%");
-        carRating.setWidthUndefined();
-        carRating.setWidth(40, Unit.PIXELS);
-        carRating.setHeight(ROW_HEIGHT, Unit.PIXELS);
-
-        layout.addComponent(carRating);
-
-        return layout;
-    }
-
-    private Component createFoodSelector(Grid grid, Customer customer) {
-
-        ComboBox select = new ComboBox();
-        select.setWidth(200, Unit.PIXELS);
-        select.setHeight(ROW_HEIGHT, Unit.PIXELS);
-        select.addItems(Customer.Food.FISH, Customer.Food.HAMBURGER, Customer.Food.VEGETABLES);
-        select.setPropertyDataSource(new BeanItem<>(customer).getItemProperty(FOOD));
-        select.addValueChangeListener(e -> {
-            // a hack to force rerendering of the grid
-            focusPreserveExtension.saveFocus();
-            grid.setCellStyleGenerator(grid.getCellStyleGenerator());
-            focusPreserveExtension.restoreFocus();
-        });
-        return select;
-    }
 
     private CheckBox createEnableDisableCheckBox(final Grid myGrid) {
         CheckBox checkBox = new CheckBox("enable/disable");

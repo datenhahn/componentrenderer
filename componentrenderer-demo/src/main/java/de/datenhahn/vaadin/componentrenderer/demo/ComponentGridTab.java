@@ -13,16 +13,11 @@
  */
 package de.datenhahn.vaadin.componentrenderer.demo;
 
-import com.vaadin.data.util.BeanItem;
-import com.vaadin.server.FontAwesome;
-import com.vaadin.server.ThemeResource;
-import com.vaadin.shared.ui.label.ContentMode;
-import com.vaadin.ui.*;
+import com.vaadin.ui.CheckBox;
+import com.vaadin.ui.Grid;
+import com.vaadin.ui.Label;
+import com.vaadin.ui.VerticalLayout;
 import de.datenhahn.vaadin.componentrenderer.grid.ComponentGrid;
-import org.fluttercode.datafactory.impl.DataFactory;
-
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * Demonstrates the use of the typed ComponentGrid
@@ -31,36 +26,13 @@ import java.util.List;
  */
 public class ComponentGridTab extends VerticalLayout {
 
-    private static final String FOOD = "food";
-    private static final String FOOD_ICON = "foodIcon";
-    private static final String RATING = "rating";
-    private static final String DELETE = "delete";
-    private static final String ID = "id";
-    private static final String FIRST_NAME = "firstName";
-    private static final String LAST_NAME = "lastName";
-    private static final String DETAILS_ICONS = "detailsIcons";
-    private final DataFactory testData = new DataFactory();
-
-    private static final int ROW_HEIGHT = 40;
+    private static final String GENERATED_FOOD_ICON = "foodIcon";
+    private static final String GENERATED_RATING = "rating";
+    private static final String GENERATED_DELETE = "delete";
+    private static final String GENERATED_DETAILS_ICONS = "detailsIcons";
 
     public ComponentGridTab() {
         init();
-    }
-
-    private List<Customer> createDummyData() {
-        LinkedList<Customer> list = new LinkedList<>();
-
-        for (int i = 1; i <= 10000; i++) {
-
-            Customer customer = new Customer();
-            customer.setId(i);
-            customer.setFirstName(testData.getFirstName());
-            customer.setLastName(testData.getLastName());
-            customer.setFood(testData.getItem(Customer.Food.values()));
-
-            list.add(customer);
-        }
-        return list;
     }
 
     private void init() {
@@ -77,118 +49,22 @@ public class ComponentGridTab extends VerticalLayout {
         grid.setWidth(100, Unit.PERCENTAGE);
         grid.setHeight(100, Unit.PERCENTAGE);
 
-        grid.setRows(createDummyData());
+        grid.setRows(CustomerProvider.createDummyData());
 
-        grid.setDetailsGenerator(rowReference -> {
-            VerticalLayout layout = new VerticalLayout();
-            layout.setHeight(100, Unit.PIXELS);
-            layout.addComponent(new Label(((Customer)rowReference.getItemId()).getFirstName()));
-            return layout;
+        grid.setDetailsGenerator(new CustomerDetailsGenerator());
 
-        });
-
-        grid.addComponentColumn(FOOD, cust -> createFoodSelector(grid, cust));
-        grid.addComponentColumn(FOOD_ICON, cust -> createFoodIcon(cust));
-        grid.addComponentColumn(RATING, cust -> createRating(cust));
-        grid.addComponentColumn(DELETE, cust -> createDeleteButton(grid, cust));
-        grid.addComponentColumn(DETAILS_ICONS, cust -> createDetailsIcons(grid, cust));
+        grid.addComponentColumn(Customer.FOOD, cust -> ViewComponents.createFoodSelector(grid, null, cust));
+        grid.addComponentColumn(GENERATED_FOOD_ICON, cust -> ViewComponents.createFoodIcon(cust));
+        grid.addComponentColumn(GENERATED_RATING, cust -> ViewComponents.createRating(cust));
+        grid.addComponentColumn(GENERATED_DELETE, cust -> ViewComponents.createComponentDeleteButton(grid, cust));
+        grid.addComponentColumn(GENERATED_DETAILS_ICONS, cust -> ViewComponents.createDetailsIcons(grid, cust));
         grid.setFrozenColumnCount(1);
 
-        grid.setColumns(DETAILS_ICONS, ID, FIRST_NAME, LAST_NAME, FOOD, FOOD_ICON, RATING, DELETE);
+        grid.setColumns(GENERATED_DETAILS_ICONS, Customer.ID, Customer.FIRST_NAME, Customer.LAST_NAME, Customer.FOOD, GENERATED_FOOD_ICON, GENERATED_RATING, GENERATED_DELETE);
 
         addComponent(grid);
         setExpandRatio(grid, 1.0f);
 
-    }
-
-    private Image createDetailsIcons(ComponentGrid<Customer> grid, Customer customer) {
-        final Image imageDown = new Image("", new ThemeResource("../demotheme/img/caret-down.png"));
-        final Image imageUp = new Image("", new ThemeResource("../demotheme/img/caret-up.png"));
-        imageDown.setHeight(32,Unit.PIXELS);
-        imageDown.setWidth(32, Unit.PIXELS);
-        imageUp.setHeight(32,Unit.PIXELS);
-        imageDown.setWidth(32, Unit.PIXELS);
-
-        imageDown.addClickListener(event -> grid.setDetailsVisible(customer, true));
-        imageUp.addClickListener(event -> grid.setDetailsVisible(customer, false));
-
-        if (grid.isDetailsVisible(customer)) {
-            return imageUp;
-        } else {
-            return imageDown;
-        }
-    }
-
-    private Component createFoodIcon(Customer cust) {
-        Label label = new Label(FontAwesome.HOURGLASS_2.getHtml(), ContentMode.HTML);
-
-        label.setHeight(32,Unit.PIXELS);
-        label.setWidth(50, Unit.PIXELS);
-
-        if (cust.getFood() == Customer.Food.HAMBURGER) {
-            label.setValue(FontAwesome.AMBULANCE.getHtml());
-        }
-
-        if (cust.getFood() == Customer.Food.FISH) {
-            label.setValue(FontAwesome.HEART.getHtml());
-        }
-
-        if (cust.getFood() == Customer.Food.VEGETABLES) {
-            label.setValue(FontAwesome.SUN_O.getHtml());
-        }
-
-        return label;
-
-    }
-
-    private Button createDeleteButton(ComponentGrid<Customer> grid, Customer customer) {
-        Button delete = new Button(DELETE, event -> {
-            grid.remove(customer);
-            grid.refresh();
-        });
-        delete.setHeight(ROW_HEIGHT, Unit.PIXELS);
-        delete.setWidth(150, Unit.PIXELS);
-        return delete;
-    }
-
-
-    private CssLayout createRating(Customer customer) {
-        CssLayout layout = new CssLayout();
-        layout.setHeight(ROW_HEIGHT, Unit.PIXELS);
-        layout.setWidth(150, Unit.PIXELS);
-
-        Label overallRating = new Label(FontAwesome.STAR.getHtml(), ContentMode.HTML);
-        overallRating.addStyleName("green");
-        overallRating.setDescription("Very good : " + testData.getNumberBetween(90, 100) + "% Chance");
-        overallRating.setWidthUndefined();
-        overallRating.setWidth(40, Unit.PIXELS);
-        overallRating.setHeight(ROW_HEIGHT, Unit.PIXELS);
-        layout.addComponent(overallRating);
-
-
-        Label carRating = new Label(FontAwesome.CAR.getHtml(), ContentMode.HTML);
-        carRating.addStyleName("red");
-        carRating.setDescription("Unlikely : " + testData.getNumberBetween(1, 15) + "%");
-        carRating.setWidthUndefined();
-        carRating.setWidth(40, Unit.PIXELS);
-        carRating.setHeight(ROW_HEIGHT, Unit.PIXELS);
-
-        layout.addComponent(carRating);
-
-        return layout;
-    }
-
-    private Component createFoodSelector(ComponentGrid grid, Customer customer) {
-
-        ComboBox select = new ComboBox();
-        select.setWidth(200, Unit.PIXELS);
-        select.setHeight(ROW_HEIGHT, Unit.PIXELS);
-        select.addItems(Customer.Food.FISH, Customer.Food.HAMBURGER, Customer.Food.VEGETABLES);
-        select.setPropertyDataSource(new BeanItem<>(customer).getItemProperty(FOOD));
-        select.addValueChangeListener(e -> {
-            Notification.show("Persisting customer: " + customer.getFirstName() + " " + customer.getLastName() );
-            grid.refresh();});
-        return select;
     }
 
     private CheckBox createEnableDisableCheckBox(final Grid myGrid) {
