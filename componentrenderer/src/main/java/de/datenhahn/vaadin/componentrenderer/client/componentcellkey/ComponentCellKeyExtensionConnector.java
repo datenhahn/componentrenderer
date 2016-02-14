@@ -12,7 +12,7 @@
  * the License.
  */
 
-package de.datenhahn.vaadin.componentrenderer.client.componentgridenhancement;
+package de.datenhahn.vaadin.componentrenderer.client.componentcellkey;
 
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.vaadin.client.ServerConnector;

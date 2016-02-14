@@ -52,20 +52,30 @@ public class ComponentRenderer extends Grid.AbstractRenderer<Component> implemen
         }
     }
 
+    /**
+     * When the renderer is detached from the grid (e.g. when the column is removed)
+     * release all components to make them eligible for garbage collection.
+     *
+     * @param parent
+     */
     @Override
     public void setParent(ClientConnector parent) {
 
         if (getParent() != null && parent == null) {
-            for (Set<Component> rowComponents : components.values())
+            for (Set<Component> rowComponents : components.values()) {
                 for (Component c : rowComponents) {
                     removeComponentFromGrid(c);
                 }
+            }
+            components.clear();
         }
 
         super.setParent(parent);
 
-        // VERY IMPORTANT: registers the DataGenerator extension
-        extend(getParentGrid());
+        if(parent != null && getParent() != parent) {
+            // VERY IMPORTANT: registers the DataGenerator extension
+            extend(getParentGrid());
+        }
     }
 
 
