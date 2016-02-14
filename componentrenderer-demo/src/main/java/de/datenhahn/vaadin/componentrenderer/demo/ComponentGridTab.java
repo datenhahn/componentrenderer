@@ -2,9 +2,9 @@
  * Licensed under the Apache License,Version2.0(the"License");you may not
  * use this file except in compliance with the License.You may obtain a copy of
  * the License at
- * <p/>
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * <p/>
+ *
  * Unless required by applicable law or agreed to in writing,software
  * distributed under the License is distributed on an"AS IS"BASIS,WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND,either express or implied.See the
@@ -13,7 +13,6 @@
  */
 package de.datenhahn.vaadin.componentrenderer.demo;
 
-import com.vaadin.data.Property;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.ThemeResource;
@@ -32,15 +31,15 @@ import java.util.List;
  */
 public class ComponentGridTab extends VerticalLayout {
 
-    public static final String FOOD = "food";
-    public static final String FOOD_ICON = "foodIcon";
-    public static final String RATING = "rating";
-    public static final String DELETE = "delete";
-    public static final String ID = "id";
-    public static final String FIRST_NAME = "firstName";
-    public static final String LAST_NAME = "lastName";
-    public static final String DETAILS_ICONS = "detailsIcons";
-    private DataFactory testData = new DataFactory();
+    private static final String FOOD = "food";
+    private static final String FOOD_ICON = "foodIcon";
+    private static final String RATING = "rating";
+    private static final String DELETE = "delete";
+    private static final String ID = "id";
+    private static final String FIRST_NAME = "firstName";
+    private static final String LAST_NAME = "lastName";
+    private static final String DETAILS_ICONS = "detailsIcons";
+    private final DataFactory testData = new DataFactory();
 
     private static final int ROW_HEIGHT = 40;
 
@@ -195,12 +194,7 @@ public class ComponentGridTab extends VerticalLayout {
     private CheckBox createEnableDisableCheckBox(final Grid myGrid) {
         CheckBox checkBox = new CheckBox("enable/disable");
         checkBox.setValue(myGrid.isEnabled());
-        checkBox.addValueChangeListener(new Property.ValueChangeListener() {
-            @Override
-            public void valueChange(Property.ValueChangeEvent event) {
-                myGrid.setEnabled(!myGrid.isEnabled());
-            }
-        });
+        checkBox.addValueChangeListener(event -> myGrid.setEnabled(!myGrid.isEnabled()));
         return checkBox;
     }
 

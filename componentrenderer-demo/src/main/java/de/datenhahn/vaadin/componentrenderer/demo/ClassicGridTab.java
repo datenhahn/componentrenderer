@@ -2,9 +2,9 @@
  * Licensed under the Apache License,Version2.0(the"License");you may not
  * use this file except in compliance with the License.You may obtain a copy of
  * the License at
- * <p/>
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * <p/>
+ *
  * Unless required by applicable law or agreed to in writing,software
  * distributed under the License is distributed on an"AS IS"BASIS,WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND,either express or implied.See the
@@ -14,17 +14,21 @@
 package de.datenhahn.vaadin.componentrenderer.demo;
 
 import com.vaadin.data.Item;
-import com.vaadin.data.Property;
 import com.vaadin.data.sort.SortOrder;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.data.util.GeneratedPropertyContainer;
 import com.vaadin.data.util.PropertyValueGenerator;
+import com.vaadin.event.ShortcutAction;
+import com.vaadin.event.ShortcutListener;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.*;
+import de.datenhahn.vaadin.componentrenderer.ComponentCellKeyExtension;
 import de.datenhahn.vaadin.componentrenderer.ComponentRenderer;
+import de.datenhahn.vaadin.componentrenderer.DetailsKeysExtension;
+import de.datenhahn.vaadin.componentrenderer.FocusPreserveExtension;
 import org.fluttercode.datafactory.impl.DataFactory;
 
 import java.util.LinkedList;
@@ -37,18 +41,17 @@ import java.util.List;
  */
 public class ClassicGridTab extends VerticalLayout {
 
-    public static final String FOOD = "food";
-    public static final String FOOD_ICON = "foodIcon";
-    public static final String RATING = "rating";
-    public static final String DELETE = "delete";
-    public static final String ID = "id";
-    public static final String FIRST_NAME = "firstName";
-    public static final String LAST_NAME = "lastName";
-    public static final String DETAILS_ICONS = "detailsIcons";
-    private DataFactory testData = new DataFactory();
-
+    private static final String FOOD = "food";
+    private static final String FOOD_ICON = "foodIcon";
+    private static final String RATING = "rating";
+    private static final String DELETE = "delete";
+    private static final String ID = "id";
+    private static final String FIRST_NAME = "firstName";
+    private static final String LAST_NAME = "lastName";
+    private static final String DETAILS_ICONS = "detailsIcons";
+    private final DataFactory testData = new DataFactory();
     private static final int ROW_HEIGHT = 40;
-
+    private FocusPreserveExtension focusPreserveExtension;
     public ClassicGridTab() {
         init();
     }
@@ -73,18 +76,22 @@ public class ClassicGridTab extends VerticalLayout {
         setSizeFull();
         setMargin(true);
         setSpacing(true);
-        
+
         addComponent(new Label("Look at the sourcecode to see the difference between the typed ComponentGrid and using" +
                 " the classic grid"));
 
         Grid grid = new Grid();
+        ComponentCellKeyExtension.extend(grid);
+        focusPreserveExtension = FocusPreserveExtension.extend(grid);
+        DetailsKeysExtension.extend(grid);
+
         addComponent(createEnableDisableCheckBox(grid));
 
         grid.setWidth(100, Unit.PERCENTAGE);
         grid.setHeight(100, Unit.PERCENTAGE);
 
         // Initialize Containers
-        BeanItemContainer<Customer> bc = new BeanItemContainer<Customer>(Customer.class);
+        BeanItemContainer<Customer> bc = new BeanItemContainer<>(Customer.class);
 
         GeneratedPropertyContainer gpc = new GeneratedPropertyContainer(bc);
         grid.setContainerDataSource(gpc);
@@ -219,6 +226,15 @@ public class ClassicGridTab extends VerticalLayout {
         imageUp.setHeight(32, Unit.PIXELS);
         imageDown.setWidth(32, Unit.PIXELS);
 
+        imageDown.addShortcutListener(new ShortcutListener("enter", ShortcutAction.KeyCode.ENTER, null) {
+            @Override
+            public void handleAction(Object sender, Object target) {
+                if (sender == imageDown || sender == imageUp) {
+                    Notification.show("Shortcut captured");
+                    grid.setDetailsVisible(customer, !grid.isDetailsVisible(customer));
+                }
+            }
+        });
         imageDown.addClickListener(event -> grid.setDetailsVisible(customer, true));
         imageUp.addClickListener(event -> grid.setDetailsVisible(customer, false));
 
@@ -254,7 +270,10 @@ public class ClassicGridTab extends VerticalLayout {
     private Button createDeleteButton(Grid grid, BeanItemContainer<Customer> beanItemContainer, Customer customer) {
         Button delete = new Button(DELETE, event -> {
             beanItemContainer.removeItem(customer);
+            focusPreserveExtension.saveFocus();
             grid.setCellStyleGenerator(grid.getCellStyleGenerator());
+            focusPreserveExtension.restoreFocus();
+
         });
         delete.setHeight(ROW_HEIGHT, Unit.PIXELS);
         delete.setWidth(150, Unit.PIXELS);
@@ -296,10 +315,10 @@ public class ClassicGridTab extends VerticalLayout {
         select.addItems(Customer.Food.FISH, Customer.Food.HAMBURGER, Customer.Food.VEGETABLES);
         select.setPropertyDataSource(new BeanItem<>(customer).getItemProperty(FOOD));
         select.addValueChangeListener(e -> {
-            Notification.show("Persisting customer: " + customer.getFirstName() + " " + customer.getLastName());
-
             // a hack to force rerendering of the grid
+            focusPreserveExtension.saveFocus();
             grid.setCellStyleGenerator(grid.getCellStyleGenerator());
+            focusPreserveExtension.restoreFocus();
         });
         return select;
     }
@@ -307,12 +326,7 @@ public class ClassicGridTab extends VerticalLayout {
     private CheckBox createEnableDisableCheckBox(final Grid myGrid) {
         CheckBox checkBox = new CheckBox("enable/disable");
         checkBox.setValue(myGrid.isEnabled());
-        checkBox.addValueChangeListener(new Property.ValueChangeListener() {
-            @Override
-            public void valueChange(Property.ValueChangeEvent event) {
-                myGrid.setEnabled(!myGrid.isEnabled());
-            }
-        });
+        checkBox.addValueChangeListener(event -> myGrid.setEnabled(!myGrid.isEnabled()));
         return checkBox;
     }
 
