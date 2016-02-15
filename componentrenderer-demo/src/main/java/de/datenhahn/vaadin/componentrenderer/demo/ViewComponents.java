@@ -11,6 +11,7 @@ import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.*;
 import de.datenhahn.vaadin.componentrenderer.FocusPreserveExtension;
 import de.datenhahn.vaadin.componentrenderer.grid.ComponentGrid;
+import de.datenhahn.vaadin.componentrenderer.grid.ComponentGridDecorator;
 import org.fluttercode.datafactory.impl.DataFactory;
 
 public class ViewComponents {
@@ -94,8 +95,8 @@ public class ViewComponents {
 
     }
 
-    public static Button createDeleteButton(Grid grid, FocusPreserveExtension focusPreserveExtension,
-                                            BeanItemContainer<Customer> beanItemContainer, Customer customer) {
+    public static Button createClassicDeleteButton(Grid grid, FocusPreserveExtension focusPreserveExtension,
+                                                   BeanItemContainer<Customer> beanItemContainer, Customer customer) {
         Button delete = new Button("Delete", event -> {
             beanItemContainer.removeItem(customer);
             if (grid instanceof ComponentGrid) {
@@ -113,18 +114,33 @@ public class ViewComponents {
         return delete;
     }
 
-    public static Button createComponentDeleteButton(ComponentGrid grid, Customer customer) {
+    public static Button createDeleteButton(ComponentGridDecorator componentGridDecorator, Customer customer) {
         Button delete = new Button("Delete", event -> {
-            grid.remove(customer);
-            ((ComponentGrid) grid).refresh();
+            componentGridDecorator.getGrid().getContainerDataSource().removeItem(customer);
+            componentGridDecorator.refresh();
         });
+
         delete.setHeight(ROW_HEIGHT, Sizeable.Unit.PIXELS);
         delete.setWidth(150, Sizeable.Unit.PIXELS);
         return delete;
     }
 
+    public static Component createFoodSelector(ComponentGridDecorator componentGridDecorator, Customer
+            customer) {
 
-    public static Component createFoodSelector(Grid grid, FocusPreserveExtension focusPreserveExtension, Customer
+        ComboBox select = new ComboBox();
+        select.setWidth(200, Sizeable.Unit.PIXELS);
+        select.setHeight(ROW_HEIGHT, Sizeable.Unit.PIXELS);
+        select.addItems(Customer.Food.FISH, Customer.Food.HAMBURGER, Customer.Food.VEGETABLES);
+        select.setPropertyDataSource(new BeanItem<>(customer).getItemProperty(Customer.FOOD));
+        select.addValueChangeListener(e -> {
+            componentGridDecorator.refresh();
+        });
+        return select;
+    }
+
+
+    public static Component createClassicFoodSelector(Grid grid, FocusPreserveExtension focusPreserveExtension, Customer
             customer) {
 
         ComboBox select = new ComboBox();
@@ -144,4 +160,13 @@ public class ViewComponents {
         });
         return select;
     }
+
+    public static CheckBox createEnableDisableCheckBox(final Grid myGrid) {
+        CheckBox checkBox = new CheckBox("enable/disable");
+        checkBox.setValue(myGrid.isEnabled());
+        checkBox.addValueChangeListener(event -> myGrid.setEnabled(!myGrid.isEnabled()));
+        return checkBox;
+    }
+
+
 }

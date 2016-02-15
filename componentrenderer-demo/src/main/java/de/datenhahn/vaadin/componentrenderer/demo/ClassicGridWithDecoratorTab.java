@@ -13,55 +13,65 @@
  */
 package de.datenhahn.vaadin.componentrenderer.demo;
 
+import com.vaadin.data.util.BeanItemContainer;
+import com.vaadin.ui.Grid;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
-import de.datenhahn.vaadin.componentrenderer.grid.ComponentGrid;
+import de.datenhahn.vaadin.componentrenderer.FocusPreserveExtension;
+import de.datenhahn.vaadin.componentrenderer.grid.ComponentGridDecorator;
 
 /**
  * Demonstrates the use of the typed ComponentGrid
  *
  * @author Jonas Hahn (jonas.hahn@datenhahn.de)
  */
-public class ComponentGridTab extends VerticalLayout {
+public class ClassicGridWithDecoratorTab extends VerticalLayout {
 
     private static final String GENERATED_FOOD_ICON = "foodIcon";
     private static final String GENERATED_RATING = "rating";
     private static final String GENERATED_DELETE = "delete";
     private static final String GENERATED_DETAILS_ICONS = "detailsIcons";
 
-    public ComponentGridTab() {
+    private FocusPreserveExtension focusPreserveExtension;
+
+    public ClassicGridWithDecoratorTab() {
         init();
     }
 
     private void init() {
-
         setSizeFull();
         setMargin(true);
         setSpacing(true);
 
         addComponent(new Label("Look at the sourcecode to see the difference between the typed ComponentGrid and using" +
                 " the classic grid"));
-        ComponentGrid<Customer> grid = new ComponentGrid<>(Customer.class);
+
+        Grid grid = new Grid();
+        grid.setContainerDataSource(new BeanItemContainer<Customer>(Customer.class));
+        ComponentGridDecorator<Customer> componentGridDecorator = new ComponentGridDecorator<>(grid, Customer.class);
+        componentGridDecorator.addAll(CustomerProvider.createDummyData());
         addComponent(ViewComponents.createEnableDisableCheckBox(grid));
 
         grid.setSizeFull();
 
-        grid.setRows(CustomerProvider.createDummyData());
-
+         // Initialize DetailsGenerator (Caution: the DetailsGenerator is set to null
+        // when grid#setContainerDatasource is called, so make sure you call setDetailsGenerator
+        // after setContainerDatasource
         grid.setDetailsGenerator(new CustomerDetailsGenerator());
 
-        grid.addComponentColumn(Customer.FOOD, cust -> ViewComponents.createFoodSelector(grid.getComponentGridDecorator(), cust));
-        grid.addComponentColumn(GENERATED_FOOD_ICON, cust -> ViewComponents.createFoodIcon(cust));
-        grid.addComponentColumn(GENERATED_RATING, cust -> ViewComponents.createRating(cust));
-        grid.addComponentColumn(GENERATED_DELETE, cust -> ViewComponents.createDeleteButton(grid.getComponentGridDecorator(), cust));
-        grid.addComponentColumn(GENERATED_DETAILS_ICONS, cust -> ViewComponents.createDetailsIcons(grid, cust));
+        componentGridDecorator.addComponentColumn(Customer.FOOD, cust -> ViewComponents.createFoodSelector(componentGridDecorator, cust));
+        componentGridDecorator.addComponentColumn(GENERATED_FOOD_ICON, cust -> ViewComponents.createFoodIcon(cust));
+        componentGridDecorator.addComponentColumn(GENERATED_RATING, cust -> ViewComponents.createRating(cust));
+        componentGridDecorator.addComponentColumn(GENERATED_DELETE, cust -> ViewComponents.createDeleteButton(componentGridDecorator, cust));
+        componentGridDecorator.addComponentColumn(GENERATED_DETAILS_ICONS, cust -> ViewComponents.createDetailsIcons(grid, cust));
+
+        // always display the details column
         grid.setFrozenColumnCount(1);
 
         grid.setColumns(GENERATED_DETAILS_ICONS, Customer.ID, Customer.FIRST_NAME, Customer.LAST_NAME, Customer.FOOD, GENERATED_FOOD_ICON, GENERATED_RATING, GENERATED_DELETE);
 
         addComponent(grid);
         setExpandRatio(grid, 1.0f);
-
     }
 
 }

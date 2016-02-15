@@ -7,6 +7,7 @@ import com.vaadin.ui.*;
 public class CustomerDetailsGenerator implements Grid.DetailsGenerator {
     @Override
     public Component getDetails(Grid.RowReference rowReference) {
+        rowReference.getGrid().scrollTo(rowReference.getItemId());
         Customer customer = (Customer)rowReference.getItemId();
 
         HorizontalLayout layout = new HorizontalLayout();

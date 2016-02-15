@@ -55,10 +55,9 @@ public class ClassicGridTab extends VerticalLayout {
         focusPreserveExtension = FocusPreserveExtension.extend(grid);
         DetailsKeysExtension.extend(grid);
 
-        addComponent(createEnableDisableCheckBox(grid));
+        addComponent(ViewComponents.createEnableDisableCheckBox(grid));
 
-        grid.setWidth(100, Unit.PERCENTAGE);
-        grid.setHeight(100, Unit.PERCENTAGE);
+        grid.setSizeFull();
 
         // Initialize Containers
         BeanItemContainer<Customer> bc = new BeanItemContainer<>(Customer.class);
@@ -77,7 +76,7 @@ public class ClassicGridTab extends VerticalLayout {
         gpc.addGeneratedProperty(Customer.FOOD, new PropertyValueGenerator<Component>() {
             @Override
             public Component getValue(Item item, Object itemId, Object propertyId) {
-                return ViewComponents.createFoodSelector(grid, focusPreserveExtension, (Customer) itemId);
+                return ViewComponents.createClassicFoodSelector(grid, focusPreserveExtension, (Customer) itemId);
             }
 
             @Override
@@ -143,7 +142,7 @@ public class ClassicGridTab extends VerticalLayout {
         gpc.addGeneratedProperty(GENERATED_DELETE, new PropertyValueGenerator<Component>() {
             @Override
             public Component getValue(Item item, Object itemId, Object propertyId) {
-                return ViewComponents.createDeleteButton(grid, focusPreserveExtension, bc, (Customer) itemId);
+                return ViewComponents.createClassicDeleteButton(grid, focusPreserveExtension, bc, (Customer) itemId);
             }
 
             @Override
@@ -180,16 +179,6 @@ public class ClassicGridTab extends VerticalLayout {
 
         addComponent(grid);
         setExpandRatio(grid, 1.0f);
-    }
-
-
-
-
-    private CheckBox createEnableDisableCheckBox(final Grid myGrid) {
-        CheckBox checkBox = new CheckBox("enable/disable");
-        checkBox.setValue(myGrid.isEnabled());
-        checkBox.addValueChangeListener(event -> myGrid.setEnabled(!myGrid.isEnabled()));
-        return checkBox;
     }
 
 }

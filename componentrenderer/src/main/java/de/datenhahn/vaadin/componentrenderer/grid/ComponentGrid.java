@@ -17,9 +17,6 @@ package de.datenhahn.vaadin.componentrenderer.grid;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.data.util.GeneratedPropertyContainer;
 import com.vaadin.ui.Grid;
-import de.datenhahn.vaadin.componentrenderer.ComponentCellKeyExtension;
-import de.datenhahn.vaadin.componentrenderer.ComponentRenderer;
-import de.datenhahn.vaadin.componentrenderer.DetailsKeysExtension;
 import de.datenhahn.vaadin.componentrenderer.FocusPreserveExtension;
 
 import java.util.Collection;
@@ -34,83 +31,87 @@ import java.util.Collection;
  * @author Jonas Hahn (jonas.hahn@datenhahn.de)
  */
 public class ComponentGrid<T> extends Grid {
-    private GeneratedPropertyContainer gpc = null;
-    private final BeanItemContainer<T> bc;
-    private final Class<T> typeOfRows;
-    private final FocusPreserveExtension focusPreserveExtension;
+
+    private final ComponentGridDecorator<T> componentGridDecorator;
 
     public ComponentGrid(Class<T> typeOfRows) {
         super();
-        ComponentCellKeyExtension.extend(this);
-        focusPreserveExtension = FocusPreserveExtension.extend(this);
-        DetailsKeysExtension.extend(this);
-        this.typeOfRows = typeOfRows;
-        this.bc = new BeanItemContainer<>(typeOfRows);
-        setContainerDataSource(bc);
+        setContainerDataSource(new BeanItemContainer<T>(typeOfRows));
+        componentGridDecorator = new ComponentGridDecorator<T>(this, typeOfRows);
+    }
+
+    public ComponentGridDecorator<T> getComponentGridDecorator() {
+        return componentGridDecorator;
+    }
+
+    public FocusPreserveExtension getFocusPreserveExtension() {
+        return componentGridDecorator.getFocusPreserveExtension();
     }
 
     /**
-     * Replaces the current grid container with a {@link GeneratedPropertyContainer}
-     * while preserving the {@link DetailsGenerator}.
+     * Remove a bean from the grid.
+     *
+     * @return the decorator for method chaining
      */
-    private void initGpc() {
-        gpc = new GeneratedPropertyContainer(getContainerDataSource());
-        DetailsGenerator details = getDetailsGenerator();
-        setContainerDataSource(gpc);
-        setDetailsGenerator(details);
+    public ComponentGrid<T> remove(T bean) {
+        componentGridDecorator.remove(bean);
+        return this;
+    }
+
+    /**
+     * Add a bean to the grid.
+     *
+     * @return the decorator for method chaining
+     */
+    public ComponentGrid<T>  add(T bean) {
+        componentGridDecorator.add(bean);
+        return this;
+    }
+
+    /**
+     * Add all beans to the decorated grid's container.
+     *
+     * @param beans a collection of beans
+     * @return the grid for method chaining
+     */
+    public ComponentGrid<T> addAll(Collection<T> beans) {
+        componentGridDecorator.addAll(beans);
+        return this;
+    }
+
+    public Grid getGrid() {
+        return componentGridDecorator.getGrid();
     }
 
     /**
      * Add a generated component column to the ComponentGrid.
      *
      * @param propertyId the generated column's property-id
-     * @param generator the component-generator
-     *
+     * @param generator  the component-generator
      * @return the grid for method chaining
      */
-    public ComponentGrid<T> addComponentColumn(Object propertyId, ComponentGenerator<T> generator) {
-        if (gpc == null) {
-            initGpc();
-        }
-        gpc.addGeneratedProperty(propertyId, new ComponentPropertyGenerator<>(typeOfRows, generator));
-        getColumn(propertyId).setRenderer(new ComponentRenderer());
+    public ComponentGrid<T>  addComponentColumn(Object propertyId, ComponentGenerator<T> generator) {
+        componentGridDecorator.addComponentColumn(propertyId, generator);
         return this;
     }
 
+    /**
+     * Refreshes the grid preserving its current cell focus.
+     */
+    public ComponentGrid<T>  refresh() {
+        componentGridDecorator.refresh();
+        return this;
+    }
 
     /**
      * Remove all items from the underlying {@link BeanItemContainer} and add
      * the new beans.
      *
      * @param beans a collection of beans
-     *
-     * @return the grid for method chaining
+     * @return the decorator for method chaining
      */
-    public ComponentGrid<T> setRows(Collection<T> beans) {
-        bc.removeAllItems();
-        bc.addAll(beans);
-        return this;
-    }
-
-    /**
-     * Remove a bean from the grid.
-     *
-     * @return the grid for method chaining
-     */
-    public ComponentGrid<T> remove(T bean) {
-        bc.removeItem(bean);
-        return this;
-    }
-
-    /**
-     * Refreshes the grid preserving its current cell focus.
-     *
-     * @return the grid for method chaining
-     */
-    public ComponentGrid<T> refresh() {
-        focusPreserveExtension.saveFocus();
-        setCellStyleGenerator(getCellStyleGenerator());
-        focusPreserveExtension.restoreFocus();
+    public ComponentGrid<T>  setRows(Collection<T> beans) {
+        componentGridDecorator.setRows(beans);
         return this;
     }
 }
