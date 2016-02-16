@@ -110,6 +110,22 @@ the current focus. The ComponentGrid's <tt>refresh()</tt> function automatically
 In case you wonder <tt>grid.setCellStyleGenerator(grid.getCellStyleGenerator());</tt> is a nasty hack to force the
 grid to rerender.
 
+## HeaderGenerator
+
+The header generators make it very easy to generate headers for all bean properties and generated properties. See
+the ResourceBundleComponentHeaderGenerator for an example.
+
+    componentGridDecorator.generateHeaders(new ResourceBundleTextHeaderGenerator(ViewComponents.getLabels()));
+
+The method <tt>generateHeaders</tt> calls the HeaderGenerators <tt>getHeader</tt> method for every property and
+sets its header-caption. You should use that method once you have set the columns you want to use.
+
+There are the following types of HeaderGenerators:
+
+ * TextHeaderGenerator
+ * HtmlHeaderGenerator
+ * ComponentHeaderGenerator
+
 # Server-Side Memory Use
 
 I used jvisualvm to check if the components were released correctly. Below you find the screenshots.
