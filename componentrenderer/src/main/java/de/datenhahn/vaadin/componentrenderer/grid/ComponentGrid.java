@@ -108,10 +108,45 @@ public class ComponentGrid<T> extends Grid {
      * the new beans.
      *
      * @param beans a collection of beans
-     * @return the decorator for method chaining
+     * @return the grid for method chaining
      */
     public ComponentGrid<T>  setRows(Collection<T> beans) {
         componentGridDecorator.setRows(beans);
+        return this;
+    }
+    /**
+     * Generates component header fields using the passed {@link ComponentHeaderGenerator} and
+     * sets them to the columns.
+     *
+     * @param generator the header generator
+     * @return the grid for method chaining
+     */
+    public ComponentGrid<T> generateHeaders(ComponentHeaderGenerator generator) {
+        componentGridDecorator.generateHeaders(generator);
+        return this;
+    }
+
+    /**
+     * Generates text header fields using the passed {@link TextHeaderGenerator} and
+     * sets them to the columns.
+     *
+     * @param generator the header generator
+     * @return the grid for method chaining
+     */
+    public ComponentGrid<T> generateHeaders(TextHeaderGenerator generator) {
+        componentGridDecorator.generateHeaders(generator);
+        return this;
+    }
+
+    /**
+     * Generates html header fields using the passed {@link HtmlHeaderGenerator} and
+     * sets them to the columns.
+     *
+     * @param generator the header generator
+     * @return the grid for method chaining
+     */
+    public ComponentGrid<T> generateHeaders(HtmlHeaderGenerator generator) {
+        componentGridDecorator.generateHeaders(generator);
         return this;
     }
 }

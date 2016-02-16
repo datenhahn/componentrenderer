@@ -69,6 +69,7 @@ public class ClassicGridWithDecoratorTab extends VerticalLayout {
         grid.setFrozenColumnCount(1);
 
         grid.setColumns(GENERATED_DETAILS_ICONS, Customer.ID, Customer.FIRST_NAME, Customer.LAST_NAME, Customer.FOOD, GENERATED_FOOD_ICON, GENERATED_RATING, GENERATED_DELETE);
+        componentGridDecorator.generateHeaders(new ResourceBundleComponentHeaderGenerator(ViewComponents.getLabels()));
 
         addComponent(grid);
         setExpandRatio(grid, 1.0f);

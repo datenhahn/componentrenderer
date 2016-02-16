@@ -14,11 +14,20 @@ import de.datenhahn.vaadin.componentrenderer.grid.ComponentGrid;
 import de.datenhahn.vaadin.componentrenderer.grid.ComponentGridDecorator;
 import org.fluttercode.datafactory.impl.DataFactory;
 
+import java.util.ResourceBundle;
+
 public class ViewComponents {
     private static final int ROW_HEIGHT = 40;
 
+    private static final ResourceBundle
+            labels = ResourceBundle.getBundle(ComponentRendererDemoUI.class.getPackage().getName() + ".DemoGridBundle", UI
+            .getCurrent().getLocale());
 
     private static final DataFactory testData = new DataFactory();
+
+    public static ResourceBundle getLabels() {
+        return labels;
+    }
 
     public static CssLayout createRating(Customer customer) {
         CssLayout layout = new CssLayout();

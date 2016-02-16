@@ -56,8 +56,8 @@ public class ComponentGridTab extends VerticalLayout {
         grid.addComponentColumn(GENERATED_DELETE, cust -> ViewComponents.createDeleteButton(grid.getComponentGridDecorator(), cust));
         grid.addComponentColumn(GENERATED_DETAILS_ICONS, cust -> ViewComponents.createDetailsIcons(grid, cust));
         grid.setFrozenColumnCount(1);
-
         grid.setColumns(GENERATED_DETAILS_ICONS, Customer.ID, Customer.FIRST_NAME, Customer.LAST_NAME, Customer.FOOD, GENERATED_FOOD_ICON, GENERATED_RATING, GENERATED_DELETE);
+        grid.generateHeaders(new ResourceBundleHtmlHeaderGenerator(ViewComponents.getLabels()));
 
         addComponent(grid);
         setExpandRatio(grid, 1.0f);

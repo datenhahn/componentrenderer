@@ -107,7 +107,7 @@ public class ComponentGridDecorator<T> {
         }
         return this;
     }
-    
+
     /**
      * Remove a bean from the grid.
      *
@@ -130,6 +130,8 @@ public class ComponentGridDecorator<T> {
 
     /**
      * Refreshes the grid preserving its current cell focus.
+     *
+     * @return the decorator for method chaining
      */
     public ComponentGridDecorator<T> refresh() {
 
@@ -147,4 +149,54 @@ public class ComponentGridDecorator<T> {
         focusPreserveExtension.restoreFocus();
         return this;
     }
+
+    /**
+     * Generates component header fields using the passed {@link ComponentHeaderGenerator} and
+     * sets them to the columns.
+     *
+     * @param generator the header generator
+     * @return the decorator for method chaining
+     */
+    public ComponentGridDecorator<T> generateHeaders(ComponentHeaderGenerator generator) {
+        for (Grid.Column column : grid.getColumns()) {
+            grid.getDefaultHeaderRow()
+                .getCell(column.getPropertyId())
+                .setComponent(generator.getHeader(column.getPropertyId()));
+        }
+        return this;
+    }
+
+    /**
+     * Generates text header fields using the passed {@link TextHeaderGenerator} and
+     * sets them to the columns.
+     *
+     * @param generator the header generator
+     * @return the decorator for method chaining
+     */
+    public ComponentGridDecorator<T> generateHeaders(TextHeaderGenerator generator) {
+        for (Grid.Column column : grid.getColumns()) {
+            grid.getDefaultHeaderRow()
+                .getCell(column.getPropertyId())
+                .setText(generator.getHeader(column.getPropertyId()));
+        }
+        return this;
+    }
+
+    /**
+     * Generates html header fields using the passed {@link HtmlHeaderGenerator} and
+     * sets them to the columns.
+     *
+     * @param generator the header generator
+     * @return the decorator for method chaining
+     */
+    public ComponentGridDecorator<T> generateHeaders(HtmlHeaderGenerator generator) {
+        for (Grid.Column column : grid.getColumns()) {
+            grid.getDefaultHeaderRow()
+                .getCell(column.getPropertyId())
+                .setHtml(generator.getHeader(column.getPropertyId()));
+        }
+        return this;
+    }
+
+
 }

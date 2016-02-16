@@ -64,6 +64,7 @@ public class ViritinMGridTab extends MVerticalLayout {
         mGrid.setFrozenColumnCount(1);
 
         mGrid.withProperties(GENERATED_DETAILS_ICONS, Customer.ID, Customer.FIRST_NAME, Customer.LAST_NAME, Customer.FOOD, GENERATED_FOOD_ICON, GENERATED_RATING, GENERATED_DELETE);
+        componentGridDecorator.generateHeaders(new ResourceBundleTextHeaderGenerator(ViewComponents.getLabels()));
 
         expand(mGrid);
     }
