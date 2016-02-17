@@ -14,10 +14,17 @@
 package de.datenhahn.vaadin.componentrenderer.client;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Document;
+import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.NativeEvent;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.vaadin.client.ComponentConnector;
 import com.vaadin.client.renderers.WidgetRenderer;
 import com.vaadin.client.widget.grid.RendererCellReference;
+
+import java.util.Collection;
 
 /**
  * A renderer for vaadin components.
@@ -26,18 +33,35 @@ import com.vaadin.client.widget.grid.RendererCellReference;
  */
 public class ComponentRenderer extends WidgetRenderer<ComponentConnector, SimplePanel> {
 
+    /**
+     * Propagates clicks on the renderers simple panel to the grid to make the
+     * row select work. Will only propagate clicks which go on the SimplePanel itself
+     * or on a layout-component (css class v-layout). It is assumed, that components want
+     * to capture clicks by themselves and don't want any "side-actions" being happening
+     * which would distract the user.
+     */
+    private static PropagationClickHandler propagationClickHandler = new PropagationClickHandler();
 
     @Override
     public SimplePanel createWidget() {
-        SimplePanel panel = GWT.create(SimplePanel.class);
+        final SimplePanel panel = GWT.create(SimplePanel.class);
         panel.setWidth("100%");
         panel.setHeight("100%");
         panel.getElement().addClassName("component-cell");
+        panel.sinkEvents(com.google.gwt.user.client.Event.ONCLICK);
+        panel.addDomHandler(propagationClickHandler, ClickEvent.getType());
         return panel;
     }
 
     @Override
-    public void render(RendererCellReference rendererCellReference, ComponentConnector componentConnector, SimplePanel panel) {
+    public Collection<String> getConsumedEvents() {
+        return super.getConsumedEvents();
+    }
+
+    @Override
+    public void render(RendererCellReference rendererCellReference, ComponentConnector componentConnector,
+                       SimplePanel panel)
+    {
         if (componentConnector != null) {
             panel.setWidget(componentConnector.getWidget());
 
@@ -46,5 +70,42 @@ public class ComponentRenderer extends WidgetRenderer<ComponentConnector, Simple
         }
     }
 
+    /**
+     * Propagates clicks on the renderers simple panel to the grid to make the
+     * row select work. Will only propagate clicks which go on the SimplePanel itself
+     * or on a layout-component (css class v-layout). It is assumed, that components want
+     * to capture clicks by themselves and don't want any "side-actions" being happening
+     * which would distract the user.
+     */
+    private static class PropagationClickHandler implements ClickHandler {
 
+        public static final int SINGLE_CLICK = 1;
+
+        @Override
+        public void onClick(ClickEvent clickEvent) {
+            Element clickedTarget = Element.as(clickEvent.getNativeEvent().getEventTarget());
+
+            if (clickedTarget.getClassName().contains("component-cell") ||
+                clickedTarget.getClassName().contains("v-layout")) {
+                NativeEvent event = cloneClickEvent(clickEvent);
+                clickedTarget.getParentElement().dispatchEvent(event);
+            } else {
+
+                clickEvent.stopPropagation();
+                clickEvent.preventDefault();
+            }
+        }
+
+        private NativeEvent cloneClickEvent(ClickEvent clickEvent) {
+            return Document.get().createClickEvent(SINGLE_CLICK,
+                                    clickEvent.getNativeEvent().getScreenX(),
+                                    clickEvent.getNativeEvent().getScreenY(),
+                                    clickEvent.getNativeEvent().getClientX(),
+                                    clickEvent.getNativeEvent().getClientY(),
+                                    clickEvent.getNativeEvent().getCtrlKey(),
+                                    clickEvent.getNativeEvent().getAltKey(),
+                                    clickEvent.getNativeEvent().getShiftKey(),
+                                    clickEvent.getNativeEvent().getMetaKey());
+        }
+    }
 }
