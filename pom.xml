@@ -5,7 +5,7 @@
 	<groupId>de.datenhahn.vaadin</groupId>
 	<artifactId>componentrenderer-root</artifactId>
 	<packaging>pom</packaging>
-	<version>0.3.2</version>
+	<version>0.3.3</version>
 	<name>ComponentRenderer Root Project</name>
 
 	<modules>
