@@ -4,9 +4,11 @@
 
 	<groupId>de.datenhahn.vaadin</groupId>
 	<artifactId>componentrenderer</artifactId>
-	<packaging>jar</packaging>
+	<packaging>bundle</packaging>
 	<version>0.3.3</version>
 	<name>ComponentRenderer</name>
+	<description>Renders standard vaadin components inside the vaadin grid</description>
+	<url>https://github.com/datenhahn/componentrenderer</url>
 
 	<properties>
 		<vaadin.version>7.6.2</vaadin.version>
@@ -99,6 +101,31 @@
 			</plugin>
 
 			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<version>3.0.1</version>
+				<extensions>true</extensions>
+				<configuration>
+					<instructions>
+						<Bundle-SymbolicName>${pom.groupId}.${pom.artifactId}</Bundle-SymbolicName>
+						<Bundle-Name>${pom.name}</Bundle-Name>
+						<Bundle-Version>${pom.version}</Bundle-Version>
+						<Export>!de.datenhahn.vaadin.componentrenderer.client.*,de.datenhahn.vaadin.componentrenderer.*,</Export>
+						<Import-Package>!com.google.gwt.*,!com.vaadin.client.*,*</Import-Package>
+					</instructions>
+				</configuration>
+				<executions>
+					<execution>
+						<id>manifest</id>
+						<phase>process-classes</phase>
+						<goals>
+							<goal>manifest</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
 				<version>2.3.1</version>
@@ -173,6 +200,30 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>2.14.1</version>
 			</plugin>
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>attach-artifacts</id>
+						<phase>package</phase>
+						<goals>
+							<goal>attach-artifact</goal>
+						</goals>
+						<configuration>
+							<artifacts>
+								<artifact>
+									<file>target/classes/features.xml</file>
+									<type>xml</type>
+									<classifier>features</classifier>
+								</artifact>
+							</artifacts>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
 		</plugins>
 
 		<!-- This is needed for the sources required by the client-side compiler to be
@@ -186,6 +237,17 @@
 			</resource>
 			<resource>
 				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+				<includes>
+					<include>**/*.xml</include>
+				</includes>
+			</resource>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>false</filtering>
+				<excludes>
+					<exclude>**/*.xml</exclude>
+				</excludes>
 			</resource>
 		</resources>
 

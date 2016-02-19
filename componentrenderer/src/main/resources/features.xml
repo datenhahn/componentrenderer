@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<features>
+    <feature name='vaadin-componentrenderer' version='${pom.version}'>
+        <bundle>mvn:${pom.groupId}/${pom.artifactId}/${pom.version}</bundle>
+        <feature>vaadin-server</feature>
+        <feature>commons-lang3</feature>
+    </feature>
+    <feature name='vaadin-server' version='7.6.2'>
+        <bundle>mvn:org.jsoup/jsoup/1.8.3</bundle>
+        <bundle>mvn:javax.validation/validation-api/1.1.0.Final</bundle>
+        <bundle>mvn:javax.servlet/javax.servlet-api/3.1.0</bundle>
+        <bundle>mvn:com.vaadin.external.flute/flute/1.3.0.gg2</bundle>
+        <bundle>mvn:com.vaadin.external.streamhtmlparser/streamhtmlparser-jsilver/0.0.10.vaadin1</bundle>
+        <bundle>mvn:com.vaadin.external.google/guava/16.0.1.vaadin1</bundle>
+        <bundle>mvn:com.vaadin/vaadin-shared/7.6.2</bundle>
+        <bundle>mvn:com.vaadin/vaadin-server/7.6.2</bundle>
+    </feature>
+    <feature name='commons-lang3' version='3.4'>
+        <bundle>mvn:org.apache.commons/commons-lang3/3.4</bundle>
+    </feature>
+</features>
