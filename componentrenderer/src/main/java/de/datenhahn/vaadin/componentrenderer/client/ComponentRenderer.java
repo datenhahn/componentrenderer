@@ -40,15 +40,12 @@ public class ComponentRenderer extends WidgetRenderer<ComponentConnector, Simple
      * to capture clicks by themselves and don't want any "side-actions" being happening
      * which would distract the user.
      */
-    private static PropagationClickHandler propagationClickHandler = new PropagationClickHandler();
+    private static final PropagationClickHandler propagationClickHandler = new PropagationClickHandler();
 
     @Override
     public SimplePanel createWidget() {
         final SimplePanel panel = GWT.create(SimplePanel.class);
-        panel.setWidth("100%");
-        panel.setHeight("100%");
         panel.getElement().addClassName("component-cell");
-        panel.sinkEvents(com.google.gwt.user.client.Event.ONCLICK);
         panel.addDomHandler(propagationClickHandler, ClickEvent.getType());
         return panel;
     }
