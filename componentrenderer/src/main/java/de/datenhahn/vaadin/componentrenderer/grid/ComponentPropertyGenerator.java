@@ -34,7 +34,7 @@ public class ComponentPropertyGenerator<T> extends PropertyValueGenerator<Compon
      * Create a new {@link ComponentPropertyGenerator}.
      *
      * @param typeOfRows the type of the beans used in the grid
-     * @param generator the generator used to create the components
+     * @param generator  the generator used to create the components
      */
     public ComponentPropertyGenerator(Class<T> typeOfRows, ComponentGenerator<T> generator) {
         this.typeOfRows = typeOfRows;
@@ -69,12 +69,17 @@ public class ComponentPropertyGenerator<T> extends PropertyValueGenerator<Compon
      * If that's the case the underlying bean-property can be used for sorting.
      *
      * @param order the sort-order
-     *
      * @return true when the property of the column to be sorted hides a bean-field, false otherwise
      */
     private boolean hidesBeanField(SortOrder order) {
-        return typeOfRows != null &&
-               FieldUtils.getField(typeOfRows, (String) order.getPropertyId(), true) != null;
+        return typeOfRows != null && typeHasProperty((String) order.getPropertyId());
+    }
+
+    private boolean typeHasProperty(String propertyId) {
+        boolean hasProperty = FieldUtils.getField(typeOfRows, propertyId, true) != null;
+        String prefixedProperty = "is" + propertyId.substring(0, 1).toUpperCase() + propertyId.substring(1);
+        boolean hasPrefixedProperty = FieldUtils.getField(typeOfRows, prefixedProperty, true) != null;
+        return hasProperty || hasPrefixedProperty;
     }
 
     @Override

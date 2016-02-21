@@ -50,14 +50,15 @@ public class ComponentGridTab extends VerticalLayout {
 
         grid.setDetailsGenerator(new CustomerDetailsGenerator());
 
+        grid.addComponentColumn(Customer.PREMIUM, cust -> ViewComponents.createPremiumCheckbox(grid.getComponentGridDecorator(), cust));
         grid.addComponentColumn(Customer.FOOD, cust -> ViewComponents.createFoodSelector(grid.getComponentGridDecorator(), cust));
         grid.addComponentColumn(GENERATED_FOOD_ICON, cust -> ViewComponents.createFoodIcon(cust));
         grid.addComponentColumn(GENERATED_RATING, cust -> ViewComponents.createRating(cust));
         grid.addComponentColumn(GENERATED_DELETE, cust -> ViewComponents.createDeleteButton(grid.getComponentGridDecorator(), cust));
         grid.addComponentColumn(GENERATED_DETAILS_ICONS, cust -> ViewComponents.createDetailsIcons(grid, cust));
         grid.setFrozenColumnCount(1);
-        grid.setColumns(GENERATED_DETAILS_ICONS, Customer.ID, Customer.FIRST_NAME, Customer.LAST_NAME, Customer.FOOD, GENERATED_FOOD_ICON, GENERATED_RATING, GENERATED_DELETE);
-        grid.generateHeaders(new ResourceBundleHtmlHeaderGenerator(ViewComponents.getLabels()));
+        grid.setColumns(GENERATED_DETAILS_ICONS, Customer.ID, Customer.PREMIUM, Customer.FIRST_NAME, Customer.LAST_NAME, Customer.FOOD, GENERATED_FOOD_ICON, GENERATED_RATING, GENERATED_DELETE);
+        grid.generateHeaders(new ResourceBundleComponentHeaderGenerator(ViewComponents.getLabels()));
 
         addComponent(grid);
         setExpandRatio(grid, 1.0f);

@@ -28,6 +28,17 @@ public class Customer {
     public static final String PHOTO = "photo";
     private ThemeResource photo;
 
+    public static final String PREMIUM = "premium";
+    private boolean isPremium;
+
+    public boolean isPremium() {
+        return isPremium;
+    }
+
+    public void setPremium(boolean isPremium) {
+        this.isPremium = isPremium;
+    }
+
     public ThemeResource getPhoto() {
         return photo;
     }

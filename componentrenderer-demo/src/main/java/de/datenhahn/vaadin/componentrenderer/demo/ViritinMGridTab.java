@@ -55,6 +55,7 @@ public class ViritinMGridTab extends MVerticalLayout {
         componentGridDecorator.setRows(CustomerProvider.createDummyData());
         mGrid.setDetailsGenerator(new CustomerDetailsGenerator());
 
+        componentGridDecorator.addComponentColumn(Customer.PREMIUM, cust -> ViewComponents.createPremiumCheckbox(componentGridDecorator, cust));
         componentGridDecorator.addComponentColumn(Customer.FOOD, cust -> ViewComponents.createFoodSelector(componentGridDecorator, cust));
         componentGridDecorator.addComponentColumn(GENERATED_FOOD_ICON, cust -> ViewComponents.createFoodIcon(cust));
         componentGridDecorator.addComponentColumn(GENERATED_RATING, cust -> ViewComponents.createRating(cust));
@@ -63,7 +64,7 @@ public class ViritinMGridTab extends MVerticalLayout {
 
         mGrid.setFrozenColumnCount(1);
 
-        mGrid.withProperties(GENERATED_DETAILS_ICONS, Customer.ID, Customer.FIRST_NAME, Customer.LAST_NAME, Customer.FOOD, GENERATED_FOOD_ICON, GENERATED_RATING, GENERATED_DELETE);
+        mGrid.withProperties(GENERATED_DETAILS_ICONS, Customer.ID, Customer.PREMIUM, Customer.FIRST_NAME, Customer.LAST_NAME, Customer.FOOD, GENERATED_FOOD_ICON, GENERATED_RATING, GENERATED_DELETE);
         componentGridDecorator.generateHeaders(new ResourceBundleTextHeaderGenerator(ViewComponents.getLabels()));
 
         expand(mGrid);

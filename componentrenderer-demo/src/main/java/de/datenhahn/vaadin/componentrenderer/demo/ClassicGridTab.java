@@ -95,6 +95,8 @@ public class ClassicGridTab extends VerticalLayout {
             }
         });
 
+
+
         // Don't forget to set the ComponentRenderer AFTER adding the column
         grid.getColumn(Customer.FOOD).setRenderer(new ComponentRenderer());
 

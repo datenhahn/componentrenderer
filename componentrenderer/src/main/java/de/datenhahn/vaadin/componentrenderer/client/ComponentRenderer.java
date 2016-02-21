@@ -45,7 +45,8 @@ public class ComponentRenderer extends WidgetRenderer<ComponentConnector, Simple
     @Override
     public SimplePanel createWidget() {
         final SimplePanel panel = GWT.create(SimplePanel.class);
-        panel.getElement().addClassName("component-cell");
+        panel.getElement().addClassName("cr-component-cell");
+        panel.sinkEvents(com.google.gwt.user.client.Event.ONCLICK);
         panel.addDomHandler(propagationClickHandler, ClickEvent.getType());
         return panel;
     }
@@ -61,7 +62,6 @@ public class ComponentRenderer extends WidgetRenderer<ComponentConnector, Simple
     {
         if (componentConnector != null) {
             panel.setWidget(componentConnector.getWidget());
-
         } else {
             panel.clear();
         }
@@ -82,12 +82,21 @@ public class ComponentRenderer extends WidgetRenderer<ComponentConnector, Simple
         public void onClick(ClickEvent clickEvent) {
             Element clickedTarget = Element.as(clickEvent.getNativeEvent().getEventTarget());
 
-            if (clickedTarget.getClassName().contains("component-cell") ||
+            if (clickedTarget.getClassName().contains("cr-component-cell") ||
                 clickedTarget.getClassName().contains("v-layout")) {
                 NativeEvent event = cloneClickEvent(clickEvent);
                 clickedTarget.getParentElement().dispatchEvent(event);
+            } else if (clickedTarget.getParentElement().getClassName().contains("v-checkbox")){
+                // the vaadin checkbox registers clicks on its label and then
+                // the click is propagated to the input field which holds the actual
+                // value.
+                //
+                // When the clickevent is canceled after the label and never propagated
+                // to the input field the value-change is lost.
+                //
+                // so in case the click was on an element inside a vaadin checkbox, we don't
+                // cancel the event.
             } else {
-
                 clickEvent.stopPropagation();
                 clickEvent.preventDefault();
             }

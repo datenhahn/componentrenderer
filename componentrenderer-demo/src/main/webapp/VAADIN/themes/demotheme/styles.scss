@@ -1,7 +1,9 @@
 @import "../valo/valo.scss";
+@import "addons.scss";
 
 .demotheme {
   @include valo;
+  @include addons;
 
   $row_height: 62px;
 

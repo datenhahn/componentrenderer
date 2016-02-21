@@ -1,5 +1,6 @@
 package de.datenhahn.vaadin.componentrenderer.demo;
 
+import com.vaadin.data.Property;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.event.ShortcutAction;
@@ -31,15 +32,15 @@ public class ViewComponents {
 
     public static CssLayout createRating(Customer customer) {
         CssLayout layout = new CssLayout();
-        layout.setHeight(ROW_HEIGHT, Sizeable.Unit.PIXELS);
-        layout.setWidth(150, Sizeable.Unit.PIXELS);
+        layout.setHeight(49, Sizeable.Unit.PIXELS);
+        layout.setWidth(100, Sizeable.Unit.PIXELS);
 
         Label overallRating = new Label(FontAwesome.STAR.getHtml(), ContentMode.HTML);
         overallRating.addStyleName("green");
         overallRating.setDescription("Very good : " + testData.getNumberBetween(90, 100) + "% Chance");
         overallRating.setWidthUndefined();
-        overallRating.setWidth(40, Sizeable.Unit.PIXELS);
-        overallRating.setHeight(ROW_HEIGHT, Sizeable.Unit.PIXELS);
+        overallRating.setWidth(49, Sizeable.Unit.PIXELS);
+        overallRating.setHeight(49, Sizeable.Unit.PIXELS);
         layout.addComponent(overallRating);
 
 
@@ -47,8 +48,8 @@ public class ViewComponents {
         carRating.addStyleName("red");
         carRating.setDescription("Unlikely : " + testData.getNumberBetween(1, 15) + "%");
         carRating.setWidthUndefined();
-        carRating.setWidth(40, Sizeable.Unit.PIXELS);
-        carRating.setHeight(ROW_HEIGHT, Sizeable.Unit.PIXELS);
+        carRating.setWidth(49, Sizeable.Unit.PIXELS);
+        carRating.setHeight(49, Sizeable.Unit.PIXELS);
 
         layout.addComponent(carRating);
 
@@ -85,8 +86,8 @@ public class ViewComponents {
     public static Component createFoodIcon(Customer cust) {
         Label label = new Label(FontAwesome.HOURGLASS_2.getHtml(), ContentMode.HTML);
 
-        label.setHeight(32, Sizeable.Unit.PIXELS);
-        label.setWidth(50, Sizeable.Unit.PIXELS);
+        label.setHeight(24, Sizeable.Unit.PIXELS);
+        label.setWidth(30, Sizeable.Unit.PIXELS);
 
         if (cust.getFood() == Customer.Food.HAMBURGER) {
             label.setValue(FontAwesome.AMBULANCE.getHtml());
@@ -148,6 +149,26 @@ public class ViewComponents {
         return select;
     }
 
+
+    public static Component createPremiumCheckbox(ComponentGridDecorator componentGridDecorator, Customer
+            customer) {
+
+        CheckBox premium = new CheckBox();
+        premium.setImmediate(true);
+        premium.setWidth(19, Sizeable.Unit.PIXELS);
+        premium.setHeight(19, Sizeable.Unit.PIXELS);
+        premium.setDescription("Premium Customer?");
+
+        Property property = new BeanItem<>(customer).getItemProperty(Customer.PREMIUM);
+        premium.setPropertyDataSource(property);
+
+        premium.addValueChangeListener(e -> {
+            Notification.show(String.valueOf(customer.isPremium()));
+
+        });
+
+        return premium;
+    }
 
     public static Component createClassicFoodSelector(Grid grid, FocusPreserveExtension focusPreserveExtension, Customer
             customer) {
