@@ -69,6 +69,31 @@ Example using the renderer with the ComponentGrid, see Demo Source-Code for comp
 
     grid.addComponentColumn(FOOD, cust -> createFoodSelector(grid, cust));
     grid.addComponentColumn(FOOD_ICON, cust -> createFoodIcon(cust));
+    
+## Using the componentrenderers addon stylesheet
+
+To use the componentrenderers automatic addon stylesheet which centers components correctly
+include the addons.scss in your theme, have a look at the demotheme:
+
+    @import "../valo/valo.scss";
+    @import "addons.scss";
+    
+    .demotheme {
+      @include valo;
+      @include addons;
+
+## OSGI
+
+If you want to add the serverside parts of the renderer as OSGI bundle, you can
+use the karaf feature (if you use karaf) which installs automatically all needed
+dependencies (including vaadin).
+
+    feature:repo-add mvn:de.datenhahn.vaadin/componentrenderer/0.3.4/xml/features
+    feature:install vaadin-componentrenderer
+    
+Or you use the classic way only installing the componentrenderer bundle:
+    
+    bundle:install -s mvn:de.datenhahn.vaadin/componentrenderer/0.3.4
 
 ## Keyboard-Navigation
 
