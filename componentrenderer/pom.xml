@@ -5,7 +5,7 @@
 	<groupId>de.datenhahn.vaadin</groupId>
 	<artifactId>componentrenderer</artifactId>
 	<packaging>bundle</packaging>
-	<version>0.3.3</version>
+	<version>0.3.4</version>
 	<name>ComponentRenderer</name>
 	<description>Renders standard vaadin components inside the vaadin grid</description>
 	<url>https://github.com/datenhahn/componentrenderer</url>

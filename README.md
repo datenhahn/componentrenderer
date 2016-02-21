@@ -94,6 +94,10 @@ dependencies (including vaadin).
 Or you use the classic way only installing the componentrenderer bundle:
     
     bundle:install -s mvn:de.datenhahn.vaadin/componentrenderer/0.3.4
+    
+To see all dependencies have a look at the features.xml, most come from vaadin itself:
+
+[features.xml](https://github.com/datenhahn/componentrenderer/blob/master/componentrenderer/src/main/resources/features.xml)
 
 ## Keyboard-Navigation
 
