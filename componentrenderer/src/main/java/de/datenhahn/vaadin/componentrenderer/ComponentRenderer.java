@@ -99,12 +99,13 @@ public class ComponentRenderer extends Grid.AbstractRenderer<Component> implemen
                 // 2: VERY IMPORTANT get the component from the connector tracker !!!
                 //    if you use a GeneratedPropertyContainer and call get Value you will
                 //    get a different component
-                Component
-                        current =
-                        (Component) UI.getCurrent()
-                                      .getConnectorTracker()
-                                      .getConnector(jsonObject.getObject("d").getString(key));
-                putComponent(itemId, current);
+
+                if (jsonObject.getObject("d").get(key) != Json.createNull()) {
+                    Component current = (Component) UI.getCurrent()
+                                                      .getConnectorTracker()
+                                                      .getConnector(jsonObject.getObject("d").getString(key));
+                    putComponent(itemId, current);
+                }
             }
         }
 

@@ -75,10 +75,11 @@ public class ComponentGridDecorator<T> {
      * @param generator  the component-generator
      * @return the decorator for method chaining
      */
-    public ComponentGridDecorator<T> addComponentColumn(Object propertyId, ComponentGenerator<T> generator) {
+    public Grid.Column addComponentColumn(Object propertyId, ComponentGenerator<T> generator) {
         gpc.addGeneratedProperty(propertyId, new ComponentPropertyGenerator<>(typeOfRows, generator));
-        grid.getColumn(propertyId).setRenderer(new ComponentRenderer());
-        return this;
+        return grid.getColumn(propertyId)
+            .setRenderer(new ComponentRenderer())
+            .setEditorField(new ComponentCustomField());
     }
 
 

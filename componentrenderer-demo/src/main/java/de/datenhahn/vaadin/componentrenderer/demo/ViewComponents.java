@@ -59,8 +59,10 @@ public class ViewComponents {
     public static Image createDetailsIcons(Grid grid, Customer customer) {
         final Image imageDown = new Image("", new ThemeResource("../demotheme/img/caret-down.png"));
         final Image imageUp = new Image("", new ThemeResource("../demotheme/img/caret-up.png"));
+        imageDown.setCaption(null);
         imageDown.setHeight(32, Sizeable.Unit.PIXELS);
         imageDown.setWidth(32, Sizeable.Unit.PIXELS);
+        imageUp.setCaption(null);
         imageUp.setHeight(32, Sizeable.Unit.PIXELS);
         imageDown.setWidth(32, Sizeable.Unit.PIXELS);
 

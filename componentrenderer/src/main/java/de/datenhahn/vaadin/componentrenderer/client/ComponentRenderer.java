@@ -17,8 +17,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.*;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.vaadin.client.ComponentConnector;
 import com.vaadin.client.renderers.WidgetRenderer;
@@ -80,6 +79,15 @@ public class ComponentRenderer extends WidgetRenderer<ComponentConnector, Simple
 
         @Override
         public void onClick(ClickEvent clickEvent) {
+            handleClickEvent(clickEvent);
+        }
+
+        /**@Override
+        public void onDoubleClick(DoubleClickEvent clickEvent) {
+            handleClickEvent(clickEvent);
+        }*/
+
+        private void handleClickEvent(MouseEvent clickEvent) {
             Element clickedTarget = Element.as(clickEvent.getNativeEvent().getEventTarget());
 
             if (clickedTarget.getClassName().contains("cr-component-cell") ||
@@ -96,13 +104,10 @@ public class ComponentRenderer extends WidgetRenderer<ComponentConnector, Simple
                 //
                 // so in case the click was on an element inside a vaadin checkbox, we don't
                 // cancel the event.
-            } else {
-                clickEvent.stopPropagation();
-                clickEvent.preventDefault();
             }
         }
 
-        private NativeEvent cloneClickEvent(ClickEvent clickEvent) {
+        private NativeEvent cloneClickEvent(MouseEvent clickEvent) {
             return Document.get().createClickEvent(SINGLE_CLICK,
                                     clickEvent.getNativeEvent().getScreenX(),
                                     clickEvent.getNativeEvent().getScreenY(),

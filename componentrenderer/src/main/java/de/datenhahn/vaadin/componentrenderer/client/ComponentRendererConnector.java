@@ -17,6 +17,7 @@ import com.vaadin.client.ComponentConnector;
 import com.vaadin.client.ConnectorMap;
 import com.vaadin.client.connectors.AbstractRendererConnector;
 import com.vaadin.shared.ui.Connect;
+import elemental.json.Json;
 import elemental.json.JsonValue;
 
 /**
@@ -46,7 +47,11 @@ public class ComponentRendererConnector extends AbstractRendererConnector<Compon
      */
     @Override
     public ComponentConnector decode(JsonValue jsonConnectorId) {
-        return (ComponentConnector) ConnectorMap.get(getConnection()).getConnector(jsonConnectorId.toString());
+        if(jsonConnectorId != Json.createNull()) {
+            return (ComponentConnector) ConnectorMap.get(getConnection()).getConnector(jsonConnectorId.toString());
+        } else {
+            return null;
+        }
     }
 
 }
