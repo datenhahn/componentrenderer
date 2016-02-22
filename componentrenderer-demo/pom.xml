@@ -6,7 +6,7 @@
     <groupId>de.datenhahn.vaadin</groupId>
     <artifactId>componentrenderer-demo</artifactId>
     <packaging>war</packaging>
-    <version>0.3.5</version>
+    <version>0.3.6</version>
     <name>ComponentRenderer Demo</name>
     <properties>
         <vaadin.version>7.6.2</vaadin.version>
@@ -45,7 +45,7 @@
         <dependency>
             <groupId>de.datenhahn.vaadin</groupId>
             <artifactId>componentrenderer</artifactId>
-            <version>0.3.5</version>
+            <version>0.3.6</version>
         </dependency>
         <dependency>
             <groupId>org.vaadin</groupId>

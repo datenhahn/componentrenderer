@@ -90,9 +90,8 @@ public class ComponentGrid<T> extends Grid {
      * @param generator  the component-generator
      * @return the grid for method chaining
      */
-    public ComponentGrid<T>  addComponentColumn(Object propertyId, ComponentGenerator<T> generator) {
-        componentGridDecorator.addComponentColumn(propertyId, generator);
-        return this;
+    public Grid.Column  addComponentColumn(Object propertyId, ComponentGenerator<T> generator) {
+        return componentGridDecorator.addComponentColumn(propertyId, generator);
     }
 
     /**
