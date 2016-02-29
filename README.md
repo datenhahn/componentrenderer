@@ -169,6 +169,12 @@ There are the following types of HeaderGenerators:
 
 I used jvisualvm to check if the components were released correctly. Below you find the screenshots.
 
+Later on I added an integration test, see: de.datenhahn.vaadin.componentrenderer.testbench.MemoryIT
+
+run e.g. MemoryIT#profileFirefox(), you can also play around with different setups if you modifiy the
+grid loaded for testbench test (see method
+de.datenhahn.vaadin.componentrenderer.demo.ComponentRendererDemoUI.startTestBenchApp()).
+
 ## Initial Load
 
 The grids initially displayed rows are loaded, memory use about 50MB.
