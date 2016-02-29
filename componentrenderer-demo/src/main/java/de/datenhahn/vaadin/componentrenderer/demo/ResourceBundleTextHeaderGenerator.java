@@ -13,7 +13,7 @@
  */
 package de.datenhahn.vaadin.componentrenderer.demo;
 
-import de.datenhahn.vaadin.componentrenderer.grid.TextHeaderGenerator;
+import de.datenhahn.vaadin.componentrenderer.grid.header.TextHeaderGenerator;
 
 import java.util.ResourceBundle;
 

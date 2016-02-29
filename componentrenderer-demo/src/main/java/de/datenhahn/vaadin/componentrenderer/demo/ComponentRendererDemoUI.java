@@ -47,7 +47,19 @@ public class ComponentRendererDemoUI extends UI {
 
     @Override
     protected void init(VaadinRequest vaadinRequest) {
+        if(vaadinRequest.getPathInfo().startsWith("/testbench")) {
+            startTestBenchApp();
+        } else {
+            startDemoApp();
+        }
 
+    }
+
+    private void startTestBenchApp() {
+        setContent(new ComponentGridTab());
+    }
+
+    private void startDemoApp() {
         layout.setSizeFull();
         layout.setMargin(true);
         layout.setSpacing(true);

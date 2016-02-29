@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed under the Apache License,Version2.0(the"License");you may not
  * use this file except in compliance with the License.You may obtain a copy of
  * the License at
@@ -14,15 +14,23 @@
 
 package de.datenhahn.vaadin.componentrenderer.grid;
 
-import com.vaadin.ui.Component;
+public class ExampleBean {
+    String caption;
+    Boolean isSomething;
 
-/**
- * Typed lambda-compatible interface to generate html grid headers.
- *
- * @author Jonas Hahn (jonas.hahn@datenhahn.de)
- */
-public interface ComponentHeaderGenerator extends HeaderGenerator<Component> {
+    public Boolean getIsSomething() {
+        return isSomething;
+    }
 
-    @Override
-    Component getHeader(Object propertyId);
+    public void setIsSomething(Boolean isSomething) {
+        this.isSomething = isSomething;
+    }
+
+    public String getCaption() {
+        return caption;
+    }
+
+    public void setCaption(String caption) {
+        this.caption = caption;
+    }
 }

@@ -38,8 +38,8 @@ public class ComponentCellKeyExtension extends Grid.AbstractGridExtension {
         super.extend(grid);
     }
 
-    public static void extend(Grid grid) {
-        new ComponentCellKeyExtension(grid);
+    public static ComponentCellKeyExtension extend(Grid grid) {
+        return new ComponentCellKeyExtension(grid);
     }
 
 }

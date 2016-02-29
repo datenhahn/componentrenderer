@@ -14,11 +14,15 @@ Renders standard Vaadin components in the grid.
    switches the focus back to the surrounding cell, so navigating through the grid with the arrow keys can continue)
  * Open and Close the row-details with CTRL + DOWN and CTRL + UP
  * Preserve the grid focus on manual triggered refresh
+ * creates component editor fields for the grid editor (display or unbuffered-edit only)
  
 ## Limitations
 
  * Components inside a cell should have fixed sizes, otherwise all browsers expect Chrome do lots of measurements
    and relayout which slows down rendering
+ * Created Editor-Fields just show the components from the cell 1:1, works nicely for displaying only components,
+   for fields any changes to the underlying properties are up to your implementation, buffered-mode has no
+   effect
    
 ## Bugs & Features
 

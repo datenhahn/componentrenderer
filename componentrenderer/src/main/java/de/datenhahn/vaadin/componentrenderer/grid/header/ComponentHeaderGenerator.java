@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed under the Apache License,Version2.0(the"License");you may not
  * use this file except in compliance with the License.You may obtain a copy of
  * the License at
@@ -12,21 +12,17 @@
  * the License.
  */
 
-package de.datenhahn.vaadin.componentrenderer.grid;
+package de.datenhahn.vaadin.componentrenderer.grid.header;
 
-import java.io.Serializable;
+import com.vaadin.ui.Component;
 
 /**
- * Typed lambda-compatible interface to generate grid headers.
+ * Typed lambda-compatible interface to generate html grid headers.
  *
  * @author Jonas Hahn (jonas.hahn@datenhahn.de)
  */
-public interface HeaderGenerator<T> extends Serializable {
+public interface ComponentHeaderGenerator extends HeaderGenerator<Component> {
 
-    /**
-     * Called to generate the header field of a column.
-     *
-     * @param propertyId the propertyId of the column for which the header is created
-     */
-    T getHeader(Object propertyId);
+    @Override
+    Component getHeader(Object propertyId);
 }

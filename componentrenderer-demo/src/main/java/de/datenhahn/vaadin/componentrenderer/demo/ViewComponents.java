@@ -165,7 +165,8 @@ public class ViewComponents {
         premium.setPropertyDataSource(property);
 
         premium.addValueChangeListener(e -> {
-            Notification.show(String.valueOf(customer.isPremium()));
+            Notification.show(String.valueOf(customer.getPremium()));
+            componentGridDecorator.refresh();
 
         });
 

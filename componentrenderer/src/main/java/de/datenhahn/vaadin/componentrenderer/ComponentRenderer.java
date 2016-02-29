@@ -56,7 +56,7 @@ public class ComponentRenderer extends Grid.AbstractRenderer<Component> implemen
      * When the renderer is detached from the grid (e.g. when the column is removed)
      * release all components to make them eligible for garbage collection.
      *
-     * @param parent
+     * @param parent the parent connector
      */
     @Override
     public void setParent(ClientConnector parent) {
@@ -73,6 +73,10 @@ public class ComponentRenderer extends Grid.AbstractRenderer<Component> implemen
         super.setParent(parent);
 
         // VERY IMPORTANT: registers the DataGenerator extension
+        // with the grid. The reason the extend method is deprecated
+        // with renderers is that normal gwt-based renderers should not have
+        // a direct dependency to the grid. In case of the componentrenderer
+        // it must have this dependency to function properly.
         extend(getParentGrid());
     }
 

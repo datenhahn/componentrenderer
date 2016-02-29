@@ -18,6 +18,9 @@ import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.data.util.GeneratedPropertyContainer;
 import com.vaadin.ui.Grid;
 import de.datenhahn.vaadin.componentrenderer.FocusPreserveExtension;
+import de.datenhahn.vaadin.componentrenderer.grid.header.ComponentHeaderGenerator;
+import de.datenhahn.vaadin.componentrenderer.grid.header.HtmlHeaderGenerator;
+import de.datenhahn.vaadin.componentrenderer.grid.header.TextHeaderGenerator;
 
 import java.util.Collection;
 
@@ -77,10 +80,6 @@ public class ComponentGrid<T> extends Grid {
     public ComponentGrid<T> addAll(Collection<T> beans) {
         componentGridDecorator.addAll(beans);
         return this;
-    }
-
-    public Grid getGrid() {
-        return componentGridDecorator.getGrid();
     }
 
     /**

@@ -23,6 +23,10 @@ import de.datenhahn.vaadin.componentrenderer.ComponentCellKeyExtension;
 import de.datenhahn.vaadin.componentrenderer.ComponentRenderer;
 import de.datenhahn.vaadin.componentrenderer.DetailsKeysExtension;
 import de.datenhahn.vaadin.componentrenderer.FocusPreserveExtension;
+import de.datenhahn.vaadin.componentrenderer.grid.editor.ComponentCustomField;
+import de.datenhahn.vaadin.componentrenderer.grid.header.ComponentHeaderGenerator;
+import de.datenhahn.vaadin.componentrenderer.grid.header.HtmlHeaderGenerator;
+import de.datenhahn.vaadin.componentrenderer.grid.header.TextHeaderGenerator;
 
 import java.util.Collection;
 
@@ -34,10 +38,10 @@ import java.util.Collection;
  */
 public class ComponentGridDecorator<T> {
 
-    private FocusPreserveExtension focusPreserveExtension;
-    private Grid grid;
+    private final FocusPreserveExtension focusPreserveExtension;
+    private final Grid grid;
     private GeneratedPropertyContainer gpc = null;
-    private Class<T> typeOfRows;
+    private final Class<T> typeOfRows;
 
     public ComponentGridDecorator(Grid grid, Class<T> typeOfRows) {
         this.grid = grid;

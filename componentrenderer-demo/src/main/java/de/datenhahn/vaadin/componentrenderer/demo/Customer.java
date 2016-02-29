@@ -29,14 +29,14 @@ public class Customer {
     private ThemeResource photo;
 
     public static final String PREMIUM = "premium";
-    private boolean isPremium;
+    private boolean premium;
 
-    public boolean isPremium() {
-        return isPremium;
+    public boolean getPremium() {
+        return premium;
     }
 
-    public void setPremium(boolean isPremium) {
-        this.isPremium = isPremium;
+    public void setPremium(boolean premium) {
+        this.premium = premium;
     }
 
     public ThemeResource getPhoto() {

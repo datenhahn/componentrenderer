@@ -17,13 +17,13 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
-import com.google.gwt.event.dom.client.*;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.MouseEvent;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.vaadin.client.ComponentConnector;
 import com.vaadin.client.renderers.WidgetRenderer;
 import com.vaadin.client.widget.grid.RendererCellReference;
-
-import java.util.Collection;
 
 /**
  * A renderer for vaadin components.
@@ -34,10 +34,7 @@ public class ComponentRenderer extends WidgetRenderer<ComponentConnector, Simple
 
     /**
      * Propagates clicks on the renderers simple panel to the grid to make the
-     * row select work. Will only propagate clicks which go on the SimplePanel itself
-     * or on a layout-component (css class v-layout). It is assumed, that components want
-     * to capture clicks by themselves and don't want any "side-actions" being happening
-     * which would distract the user.
+     * row select work.
      */
     private static final PropagationClickHandler propagationClickHandler = new PropagationClickHandler();
 
@@ -48,11 +45,6 @@ public class ComponentRenderer extends WidgetRenderer<ComponentConnector, Simple
         panel.sinkEvents(com.google.gwt.user.client.Event.ONCLICK);
         panel.addDomHandler(propagationClickHandler, ClickEvent.getType());
         return panel;
-    }
-
-    @Override
-    public Collection<String> getConsumedEvents() {
-        return super.getConsumedEvents();
     }
 
     @Override
@@ -82,11 +74,6 @@ public class ComponentRenderer extends WidgetRenderer<ComponentConnector, Simple
             handleClickEvent(clickEvent);
         }
 
-        /**@Override
-        public void onDoubleClick(DoubleClickEvent clickEvent) {
-            handleClickEvent(clickEvent);
-        }*/
-
         private void handleClickEvent(MouseEvent clickEvent) {
             Element clickedTarget = Element.as(clickEvent.getNativeEvent().getEventTarget());
 
@@ -94,16 +81,6 @@ public class ComponentRenderer extends WidgetRenderer<ComponentConnector, Simple
                 clickedTarget.getClassName().contains("v-layout")) {
                 NativeEvent event = cloneClickEvent(clickEvent);
                 clickedTarget.getParentElement().dispatchEvent(event);
-            } else if (clickedTarget.getParentElement().getClassName().contains("v-checkbox")){
-                // the vaadin checkbox registers clicks on its label and then
-                // the click is propagated to the input field which holds the actual
-                // value.
-                //
-                // When the clickevent is canceled after the label and never propagated
-                // to the input field the value-change is lost.
-                //
-                // so in case the click was on an element inside a vaadin checkbox, we don't
-                // cancel the event.
             }
         }
 

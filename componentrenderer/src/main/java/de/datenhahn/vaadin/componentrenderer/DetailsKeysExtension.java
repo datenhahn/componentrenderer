@@ -26,16 +26,24 @@ public class DetailsKeysExtension extends Grid.AbstractGridExtension {
 
     private DetailsKeysExtension(final Grid grid) {
         super.extend(grid);
-        registerRpc(new DetailsOpenCloseServerRpc() {
-            @Override
-            public void setDetailsVisible(int rowIndex, boolean visible) {
-                Object itemId = grid.getContainerDataSource().getItemIds(rowIndex, 1).get(0);
-                grid.setDetailsVisible(itemId, visible);
-            }
-        });
+        registerRpc(new DetailsOpenCloseServerRpcImpl(grid));
     }
 
-    public static void extend(Grid grid) {
-        new DetailsKeysExtension(grid);
+    public static DetailsKeysExtension extend(Grid grid) {
+        return new DetailsKeysExtension(grid);
+    }
+
+    public static class DetailsOpenCloseServerRpcImpl implements DetailsOpenCloseServerRpc {
+        private final Grid grid;
+
+        public DetailsOpenCloseServerRpcImpl(Grid grid) {
+            this.grid = grid;
+        }
+
+        @Override
+        public void setDetailsVisible(int rowIndex, boolean visible) {
+            Object itemId = grid.getContainerDataSource().getItemIds(rowIndex, 1).get(0);
+            grid.setDetailsVisible(itemId, visible);
+        }
     }
 }
