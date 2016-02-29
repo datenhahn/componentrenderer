@@ -24,6 +24,12 @@ Renders standard Vaadin components in the grid.
    for fields any changes to the underlying properties are up to your implementation, buffered-mode has no
    effect
    
+## Important info
+
+ * see componentrenderer.scss for styling info
+ * make sure you add the addons.scss to your own theme, so the componentrenderer's default styles get loaded,
+   they vertically center the components in the cells
+   
 ## Bugs & Features
 
 Please report bugs or feature-wishes in the github issue-tracker to further improve this renderer.
