@@ -78,22 +78,25 @@ public class ComponentRenderer extends WidgetRenderer<ComponentConnector, Simple
             Element clickedTarget = Element.as(clickEvent.getNativeEvent().getEventTarget());
 
             if (clickedTarget.getClassName().contains("cr-component-cell") ||
-                clickedTarget.getClassName().contains("v-layout")) {
+                clickedTarget.getClassName().contains("v-layout"))
+            {
                 NativeEvent event = cloneClickEvent(clickEvent);
                 clickedTarget.getParentElement().dispatchEvent(event);
+            } else {
+                clickEvent.stopPropagation();
             }
         }
 
         private NativeEvent cloneClickEvent(MouseEvent clickEvent) {
             return Document.get().createClickEvent(SINGLE_CLICK,
-                                    clickEvent.getNativeEvent().getScreenX(),
-                                    clickEvent.getNativeEvent().getScreenY(),
-                                    clickEvent.getNativeEvent().getClientX(),
-                                    clickEvent.getNativeEvent().getClientY(),
-                                    clickEvent.getNativeEvent().getCtrlKey(),
-                                    clickEvent.getNativeEvent().getAltKey(),
-                                    clickEvent.getNativeEvent().getShiftKey(),
-                                    clickEvent.getNativeEvent().getMetaKey());
+                    clickEvent.getNativeEvent().getScreenX(),
+                    clickEvent.getNativeEvent().getScreenY(),
+                    clickEvent.getNativeEvent().getClientX(),
+                    clickEvent.getNativeEvent().getClientY(),
+                    clickEvent.getNativeEvent().getCtrlKey(),
+                    clickEvent.getNativeEvent().getAltKey(),
+                    clickEvent.getNativeEvent().getShiftKey(),
+                    clickEvent.getNativeEvent().getMetaKey());
         }
     }
 }
