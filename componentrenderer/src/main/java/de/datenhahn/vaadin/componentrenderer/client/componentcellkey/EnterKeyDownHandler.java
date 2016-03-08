@@ -63,7 +63,7 @@ public class EnterKeyDownHandler implements BodyKeyDownHandler {
     private void focusInputField(Element componentElement) {
         for (int i = 0; i < componentElement.getChildNodes().getLength(); i++) {
             Node node = componentElement.getChildNodes().getItem(i);
-            if (node.getNodeName().equals("INPUT")) {
+            if (node.getNodeName().equals("INPUT") || node.getNodeName().equals("SELECT")) {
                 WidgetUtil.focus((Element) node);
                 break;
             }
