@@ -77,7 +77,9 @@ public class ComponentRenderer extends Grid.AbstractRenderer<Component> implemen
         // with renderers is that normal gwt-based renderers should not have
         // a direct dependency to the grid. In case of the componentrenderer
         // it must have this dependency to function properly.
-        extend(getParentGrid());
+        if(parent != null) {
+            extend(getParentGrid());
+        }
     }
 
 
