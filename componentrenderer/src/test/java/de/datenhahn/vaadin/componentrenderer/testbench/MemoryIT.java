@@ -1,13 +1,6 @@
 package de.datenhahn.vaadin.componentrenderer.testbench;
 
-import com.vaadin.testbench.elements.GridElement;
-import de.datenhahn.vaadin.componentrenderer.testbench.util.MemoryUtil;
-import org.apache.commons.lang3.time.StopWatch;
 import org.junit.Test;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.lessThan;
-import static org.hamcrest.core.Is.is;
 
 public class MemoryIT extends AbstractTestBase {
 
@@ -54,14 +47,17 @@ public class MemoryIT extends AbstractTestBase {
         setupInternetExplorerDriverDriver();
         getDriver().get("http://localhost:8080/testbench");
 
-        for(int i = 1; i<=3; i++) {
+        for (int i = 1; i <= 3; i++) {
             runMemoryTest();
         }
     }
 
 
-
     private void runMemoryTest() {
+
+        throw new RuntimeException("Test is broken, checks wrong JVM, reimplementation with remote JMX access to "
+                                   + "jetty is needed");
+        /*
 
         $(GridElement.class).first().scrollToRow(1);
 
@@ -94,7 +90,7 @@ public class MemoryIT extends AbstractTestBase {
 
         assertThat(memoryUsedByGridAfterGc, is(lessThan(200L)));
 
-        System.out.println(MemoryUtil.memString());
+        System.out.println(MemoryUtil.memString());*/
     }
 
 

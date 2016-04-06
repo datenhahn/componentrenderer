@@ -77,7 +77,7 @@ public class ComponentRenderer extends Grid.AbstractRenderer<Component> implemen
         // with renderers is that normal gwt-based renderers should not have
         // a direct dependency to the grid. In case of the componentrenderer
         // it must have this dependency to function properly.
-        if(parent != null) {
+        if (parent != null) {
             extend(getParentGrid());
         }
     }
@@ -95,13 +95,11 @@ public class ComponentRenderer extends Grid.AbstractRenderer<Component> implemen
     @Override
     public void generateData(Object itemId, Item item, JsonObject jsonObject) {
 
-        // destroy all previous data for this row, sometimes it happens that
-        // destroyData is not called before generateData is called
-        destroyData(itemId);
+        Set<Component> componentsInUse = new HashSet<>();
 
         for (String key : jsonObject.getObject("d").keys()) {
             Class columnType = getParentGrid().getContainerDataSource().getType(getColumn(key).getPropertyId());
-            if (columnType.isAssignableFrom(Component.class)) {
+            if (Component.class.isAssignableFrom(columnType)) {
                 // 2: VERY IMPORTANT get the component from the connector tracker !!!
                 //    if you use a GeneratedPropertyContainer and call get Value you will
                 //    get a different component
@@ -111,24 +109,40 @@ public class ComponentRenderer extends Grid.AbstractRenderer<Component> implemen
                                                       .getConnectorTracker()
                                                       .getConnector(jsonObject.getObject("d").getString(key));
                     putComponent(itemId, current);
+                    componentsInUse.add(current);
                 }
             }
         }
+
+        // find all components, which are no longer in use for this item id
+        Set<Component> unusedComponents = new HashSet<>(components.get(itemId));
+        unusedComponents.removeAll(componentsInUse);
+
+        // remove unused components from current tracking
+        components.get(itemId).removeAll(unusedComponents);
+
+        // destroy unused components
+        destroyComponents(unusedComponents);
 
     }
 
     @Override
     public void destroyData(Object itemId) {
         if (components.containsKey(itemId)) {
-            for (Component component : components.get(itemId)) {
-                if (component != null) {
-                    removeComponentFromGrid(component);
-                }
-            }
+            destroyComponents(components.get(itemId));
             components.remove(itemId);
         }
 
     }
+
+    private void destroyComponents(Set<Component> components) {
+        for (Component component : components) {
+            if (component != null) {
+                removeComponentFromGrid(component);
+            }
+        }
+    }
+
 }
 
 

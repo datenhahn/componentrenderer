@@ -75,6 +75,7 @@ public class ComponentRendererDemoUI extends UI {
         tabSheet.addTab(new ComponentGridTab(), "Typed Component Grid");
         tabSheet.addTab(new ViritinMGridTab(), "Viritin MGrid");
         tabSheet.addTab(new NotABeanGridWithDecoratorTab(), "Not a bean grid");
+        tabSheet.addTab(new ClassicGridWithStaticContainerTab(), "Classic Grid with Static Container");
 
         layout.setExpandRatio(tabSheet, 1.0f);
         setContent(layout);

@@ -6,7 +6,7 @@
     <groupId>de.datenhahn.vaadin</groupId>
     <artifactId>componentrenderer-demo</artifactId>
     <packaging>war</packaging>
-    <version>1.0.0beta4</version>
+    <version>1.0.0beta5</version>
     <name>ComponentRenderer Demo</name>
     <properties>
         <vaadin.version>7.6.2</vaadin.version>
@@ -38,14 +38,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.vaadin</groupId>
-            <artifactId>viritin</artifactId>
-            <version>1.44</version>
-        </dependency>
-        <dependency>
             <groupId>de.datenhahn.vaadin</groupId>
             <artifactId>componentrenderer</artifactId>
-            <version>1.0.0beta4</version>
+            <version>1.0.0beta5</version>
         </dependency>
         <dependency>
             <groupId>org.vaadin</groupId>
