@@ -14,6 +14,7 @@
 package de.datenhahn.vaadin.componentrenderer.client;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
@@ -21,6 +22,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.MouseEvent;
 import com.google.gwt.user.client.ui.SimplePanel;
+import com.vaadin.addon.charts.client.ui.HighchartWidget;
 import com.vaadin.client.ComponentConnector;
 import com.vaadin.client.renderers.WidgetRenderer;
 import com.vaadin.client.widget.grid.RendererCellReference;
@@ -53,6 +55,17 @@ public class ComponentRenderer extends WidgetRenderer<ComponentConnector, Simple
     {
         if (componentConnector != null) {
             panel.setWidget(componentConnector.getWidget());
+            if(componentConnector.getWidget() instanceof HighchartWidget) {
+                final ComponentConnector passConnector = componentConnector;
+                Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+                @Override
+                public void execute() {
+                    HighchartWidget chart = (HighchartWidget) passConnector.getWidget();
+                    chart.updateSize();
+                }
+            });
+
+            }
         } else {
             panel.clear();
         }
