@@ -14,11 +14,19 @@
 
 package de.datenhahn.vaadin.componentrenderer.client.detailskeys;
 
+import com.google.gwt.user.client.Timer;
+import com.vaadin.addon.charts.client.ui.HighchartWidget;
+import com.vaadin.addon.charts.shared.ChartConnector;
 import com.vaadin.client.ServerConnector;
 import com.vaadin.client.connectors.GridConnector;
 import com.vaadin.client.extensions.AbstractExtensionConnector;
+import com.vaadin.client.widget.grid.DataAvailableEvent;
+import com.vaadin.client.widget.grid.DataAvailableHandler;
+import com.vaadin.client.widget.grid.events.ColumnResizeEvent;
+import com.vaadin.client.widget.grid.events.ColumnResizeHandler;
 import com.vaadin.client.widgets.Grid;
 import com.vaadin.shared.ui.Connect;
+import com.vaadin.shared.ui.grid.Range;
 import de.datenhahn.vaadin.componentrenderer.DetailsKeysExtension;
 
 /**
@@ -31,9 +39,31 @@ public class DetailsKeysExtensionConnector extends AbstractExtensionConnector {
 
     private final DetailsOpenCloseServerRpc detailsRpc = getRpcProxy(DetailsOpenCloseServerRpc.class);
 
+
     @Override
     protected void extend(ServerConnector target) {
         Grid grid = ((GridConnector) target).getWidget();
         grid.addBodyKeyDownHandler(new DetailsKeyDownHandler(detailsRpc));
+        final GridConnector gridConnector = ((GridConnector) target);
+        final Timer timer = new Timer() {
+            @Override
+            public void run() {
+                for(ServerConnector connector : gridConnector.getChildren()) {
+                    if(connector instanceof ChartConnector) {
+                        ((HighchartWidget) ((ChartConnector) connector).getWidget()).updateSize();
+                    }
+                }
+            }
+        };
+        grid.addDataAvailableHandler(new DataAvailableHandler() {
+            @Override
+            public void onDataAvailable(DataAvailableEvent event) {
+                Range range = event.getAvailableRows();
+                if(range.contains(0)) {
+                    timer.schedule(50);
+                }
+            }
+
+        });
     }
 }
