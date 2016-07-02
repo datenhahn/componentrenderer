@@ -178,7 +178,17 @@ public class ClassicGridTab extends VerticalLayout {
         grid.setFrozenColumnCount(1);
 
         grid.setColumns(GENERATED_DETAILS_ICONS, Customer.ID, Customer.FIRST_NAME, Customer.LAST_NAME, Customer.FOOD, GENERATED_FOOD_ICON, GENERATED_RATING, GENERATED_DELETE);
+        addComponent(new Button("Remove " + GENERATED_DELETE + " Column", new Button.ClickListener() {
 
+            @Override
+            public void buttonClick(Button.ClickEvent event) {
+                if (grid.getColumn(GENERATED_DELETE) != null) {
+                    grid.removeColumn(GENERATED_DELETE);
+                    Notification.show("removed column");
+                }
+
+            }
+        }));
         addComponent(grid);
         setExpandRatio(grid, 1.0f);
     }
