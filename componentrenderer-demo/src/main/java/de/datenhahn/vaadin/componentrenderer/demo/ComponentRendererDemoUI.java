@@ -48,15 +48,13 @@ public class ComponentRendererDemoUI extends UI {
     @Override
     protected void init(VaadinRequest vaadinRequest) {
         if(vaadinRequest.getPathInfo().startsWith("/testbench")) {
-            startTestBenchApp();
+            setContent(new TestbenchComponentGridTab());
+        } else if(vaadinRequest.getPathInfo().startsWith("/testcharts")) {
+            setContent(new TestbenchChartsGridTab());
         } else {
             startDemoApp();
         }
 
-    }
-
-    private void startTestBenchApp() {
-        setContent(new TestbenchComponentGridTab());
     }
 
     private void startDemoApp() {

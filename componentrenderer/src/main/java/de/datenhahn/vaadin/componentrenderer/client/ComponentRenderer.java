@@ -14,6 +14,7 @@
 package de.datenhahn.vaadin.componentrenderer.client;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
@@ -48,11 +49,23 @@ public class ComponentRenderer extends WidgetRenderer<ComponentConnector, Simple
     }
 
     @Override
-    public void render(RendererCellReference rendererCellReference, ComponentConnector componentConnector,
-                       SimplePanel panel)
+    public void render(RendererCellReference rendererCellReference, final ComponentConnector componentConnector,
+                       final SimplePanel panel)
     {
         if (componentConnector != null) {
-            panel.setWidget(componentConnector.getWidget());
+
+            // render chart widgets deferred so measurements are correct. Do not render
+            // normal component widgets deferred as it causes some flicker when rerendering the grid
+            if (componentConnector.getClass().getName().equals("com.vaadin.addon.charts.shared.ChartConnector")) {
+                Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+                    @Override
+                    public void execute() {
+                        panel.setWidget(componentConnector.getWidget());
+                    }
+                });
+            } else {
+                panel.setWidget(componentConnector.getWidget());
+            }
         } else {
             panel.clear();
         }

@@ -27,7 +27,6 @@ public class MemoryIT extends AbstractTestBase {
         runMemoryTest();
     }
 
-    @Test
     public void profileChromium() throws InterruptedException, IOException {
         System.out.println("\n\n===Test Chromium");
         System.out.println("  BATCH_SIZE: " + BATCH_SIZE);
@@ -38,7 +37,6 @@ public class MemoryIT extends AbstractTestBase {
 
     }
 
-    @Test
     public void profileOpera() throws InterruptedException, IOException {
         System.out.println("\n\n=== Test Opera");
         System.out.println("  BATCH_SIZE: " + BATCH_SIZE);
@@ -49,7 +47,6 @@ public class MemoryIT extends AbstractTestBase {
         runMemoryTest();
     }
 
-    @Test
     public void profileInternetExplorer() throws InterruptedException, IOException {
         System.out.println("\n\n=== Test Internet Explorer");
         System.out.println("  BATCH_SIZE: " + BATCH_SIZE);
