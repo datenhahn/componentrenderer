@@ -56,7 +56,7 @@ public class ComponentRendererDemoUI extends UI {
     }
 
     private void startTestBenchApp() {
-        setContent(new ComponentGridTab());
+        setContent(new TestbenchComponentGridTab());
     }
 
     private void startDemoApp() {

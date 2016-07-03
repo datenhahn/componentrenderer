@@ -35,6 +35,7 @@ import java.util.Set;
 public class ComponentRenderer extends Grid.AbstractRenderer<Component> implements DataGenerator {
 
     private final HashMap<Object, Set<Component>> components = new HashMap<>();
+    private boolean isRemovalInProgress = false;
 
     public ComponentRenderer() {
         super(Component.class, null);
@@ -54,20 +55,36 @@ public class ComponentRenderer extends Grid.AbstractRenderer<Component> implemen
 
     /**
      * When the renderer is detached from the grid (e.g. when the column is removed)
-     * release all components to make them eligible for garbage collection.
+     * release all components to make them eligible for garbage collection and remove
+     * the DataGenerator extension for this renderer from the Grid.
      *
      * @param parent the parent connector
      */
     @Override
     public void setParent(ClientConnector parent) {
 
+        // detect a column removal (the renderer is being detached)
         if (getParent() != null && parent == null) {
-            for (Set<Component> rowComponents : components.values()) {
-                for (Component c : rowComponents) {
-                    removeComponentFromGrid(c);
+
+            if (!isRemovalInProgress) {
+                for (Set<Component> rowComponents : components.values()) {
+                    for (Component c : rowComponents) {
+                        removeComponentFromGrid(c);
+                    }
                 }
+                components.clear();
+
+                // it is important to also detach the renderers @link{DataGenerator}
+                // when the renderer is detached. The @link{com.vaadin.ui.Grid.AbstractGridExtension#remove}
+                // does that, but calls setParent(null) again, which would lead to endless recursion
+                // so we set a flag that we currently are already in removal
+                // and stop further calls to remove().
+                //
+                isRemovalInProgress = true;
+                remove();
+            } else {
+                isRemovalInProgress = false;
             }
-            components.clear();
         }
 
         super.setParent(parent);
@@ -98,8 +115,9 @@ public class ComponentRenderer extends Grid.AbstractRenderer<Component> implemen
         Set<Component> componentsInUse = new HashSet<>();
 
         for (String key : jsonObject.getObject("d").keys()) {
-            Class columnType = getParentGrid().getContainerDataSource().getType(getColumn(key).getPropertyId());
-            if (Component.class.isAssignableFrom(columnType)) {
+
+
+            if (getColumn(key).getRenderer() == this) {
                 // 2: VERY IMPORTANT get the component from the connector tracker !!!
                 //    if you use a GeneratedPropertyContainer and call get Value you will
                 //    get a different component
@@ -112,17 +130,23 @@ public class ComponentRenderer extends Grid.AbstractRenderer<Component> implemen
                     componentsInUse.add(current);
                 }
             }
+
+
+            // find all components, which are no longer in use for this item id
+            Set<Component> itemIdComponents = components.get(itemId);
+
+            if (itemIdComponents != null) {
+
+                Set<Component> unusedComponents = new HashSet<>(itemIdComponents);
+                unusedComponents.removeAll(componentsInUse);
+
+                // remove unused components from current tracking
+                components.get(itemId).removeAll(unusedComponents);
+
+                // destroy unused components
+                destroyComponents(unusedComponents);
+            }
         }
-
-        // find all components, which are no longer in use for this item id
-        Set<Component> unusedComponents = new HashSet<>(components.get(itemId));
-        unusedComponents.removeAll(componentsInUse);
-
-        // remove unused components from current tracking
-        components.get(itemId).removeAll(unusedComponents);
-
-        // destroy unused components
-        destroyComponents(unusedComponents);
 
     }
 
