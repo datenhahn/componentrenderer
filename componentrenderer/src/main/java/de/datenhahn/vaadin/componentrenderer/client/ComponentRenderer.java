@@ -21,11 +21,16 @@ import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.MouseEvent;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.SimplePanel;
-import com.vaadin.addon.charts.client.ui.HighchartWidget;
 import com.vaadin.client.ComponentConnector;
+import com.vaadin.client.ServerConnector;
 import com.vaadin.client.renderers.WidgetRenderer;
+import com.vaadin.client.ui.AbstractComponentConnector;
+import com.vaadin.client.widget.grid.DataAvailableEvent;
+import com.vaadin.client.widget.grid.DataAvailableHandler;
 import com.vaadin.client.widget.grid.RendererCellReference;
+import com.vaadin.shared.ui.grid.Range;
 
 /**
  * A renderer for vaadin components.
@@ -50,21 +55,24 @@ public class ComponentRenderer extends WidgetRenderer<ComponentConnector, Simple
     }
 
     @Override
-    public void render(RendererCellReference rendererCellReference, ComponentConnector componentConnector,
-                       SimplePanel panel)
+    public void render(RendererCellReference rendererCellReference, final ComponentConnector componentConnector,
+                       final SimplePanel panel)
     {
         if (componentConnector != null) {
-            panel.setWidget(componentConnector.getWidget());
-            if(componentConnector.getWidget() instanceof HighchartWidget) {
-                final ComponentConnector passConnector = componentConnector;
-                Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
-                @Override
-                public void execute() {
-                    HighchartWidget chart = (HighchartWidget) passConnector.getWidget();
-                    chart.updateSize();
-                }
-            });
 
+            // do a deferred rendering for charts, so the charts widget can do correct
+            // measurements (otherwise it vanishes).
+            // We don't activate deferred rendering for the rest of the components, as it
+            // will result in flickering of the components when rerendering the whole grid.
+            if (componentConnector.getClass().getName().equals("com.vaadin.addon.charts.shared.ChartConnector")) {
+                Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+                    @Override
+                    public void execute() {
+                        panel.setWidget(componentConnector.getWidget());
+                    }
+                });
+            } else {
+                panel.setWidget(componentConnector.getWidget());
             }
         } else {
             panel.clear();
