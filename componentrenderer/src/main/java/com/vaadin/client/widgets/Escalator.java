@@ -76,7 +76,9 @@ import com.vaadin.client.BrowserInfo;
 import com.vaadin.client.DeferredWorker;
 import com.vaadin.client.Profiler;
 import com.vaadin.client.WidgetUtil;
+import com.vaadin.client.connectors.GridConnector;
 import com.vaadin.client.ui.SubPartAware;
+import com.vaadin.client.ui.VNotification;
 import com.vaadin.client.widget.escalator.Cell;
 import com.vaadin.client.widget.escalator.ColumnConfiguration;
 import com.vaadin.client.widget.escalator.EscalatorUpdater;
@@ -100,10 +102,12 @@ import com.vaadin.client.widget.escalator.SpacerUpdater;
 import com.vaadin.client.widget.grid.events.ScrollEvent;
 import com.vaadin.client.widget.grid.events.ScrollHandler;
 import com.vaadin.client.widgets.Escalator.JsniUtil.TouchHandlerBundle;
+import com.vaadin.shared.Position;
 import com.vaadin.shared.ui.grid.HeightMode;
 import com.vaadin.shared.ui.grid.Range;
 import com.vaadin.shared.ui.grid.ScrollDestination;
 import com.vaadin.shared.util.SharedUtil;
+import com.vaadin.ui.ConnectorTracker;
 
 /*-
 
@@ -5541,40 +5545,18 @@ public class Escalator extends Widget implements RequiresResize,
         public void run() {
             scroller.onScroll();
             scrollHandler.setDelayedScroll(false);
-            getParent().getElement().removeChild(scrollHandler.getIndicator().getElement());
-
         }
     }
 
-    private HTML createCurrentScrollPosIndicator() {
-        HTML indicator = new HTML();
-        indicator.getElement().setAttribute("id", DOM.createUniqueId());
-        indicator.getElement().getStyle().setPosition(Style.Position.ABSOLUTE);
-        indicator.getElement().getStyle().setZIndex(9999);
-        indicator.getElement().addClassName("v-grid-editor-lockingoverlay");
-        indicator.getElement().getStyle().setLeft(10, Style.Unit.PX);
-        indicator.getElement().getStyle().setTop(10, Style.Unit.PX);
-        indicator.getElement().getStyle().setHeight(50, Style.Unit.PX);
-        indicator.getElement().getStyle().setWidth(150, Style.Unit.PX);
-        indicator.getElement().getStyle().setBackgroundColor("#00ff00");
-        return indicator;
-    }
-
     class DelayedScrollHandler implements ScrollHandler {
-        private double MAX_DELTA = 100;
+        private double MAX_DELTA = 200;
         private boolean delayedScroll = false;
         private double lastPosition = 0;
         private Timer scrollExecutor;
-        private HTML indicator;
 
         public DelayedScrollHandler() {
             lastPosition = verticalScrollbar.getScrollPos();
             scrollExecutor = new DelayedScrollExecutor(this);
-            indicator = createCurrentScrollPosIndicator();
-        }
-
-        public HTML getIndicator() {
-            return indicator;
         }
 
         @Override
@@ -5584,28 +5566,27 @@ public class Escalator extends Widget implements RequiresResize,
             lastPosition = verticalScrollbar.getScrollPos();
 
             if(delta > MAX_DELTA) {
-                if(! delayedScroll) {
-                    getParent().getElement().appendChild(indicator.getElement());
-                }
+//                if(! delayedScroll) {
+//                    getParent().getElement().appendChild(indicator.getElement());
+//                }
 
                 delayedScroll = true;
                 scrollExecutor.cancel();
-                scrollExecutor.schedule(100);
-
-                // indicator thingy does not work yet, it does not
-                // update on scroll, probably because scroll positions
-                // are updated only when scroller.onScroll() is called
-                if( diff > 0) {
-                    indicator.setText(getVisibleRowRange().getEnd() +"");
-                } else {
-                    indicator.setText(getVisibleRowRange().getStart() + "");
-                }
+                scrollExecutor.schedule(200);
             }
 
             if(!delayedScroll) {
                 scroller.onScroll();
             } else {
-
+                //indicator.setText(Math.round(lastPosition / body.getDefaultRowHeight()) + "");
+                if (getParent() != null) {
+                    VNotification notification = VNotification.createNotification(200, getParent());
+                    notification.setOwner(getParent());
+                    notification.setAutoHideEnabled(true);
+                    notification.setWidth("90%");
+                    notification.show("        " + Math.round(lastPosition / body.getDefaultRowHeight())
+                                      + "        ", Position.MIDDLE_CENTER, null);
+                }
             }
 
             fireEvent(new ScrollEvent());
