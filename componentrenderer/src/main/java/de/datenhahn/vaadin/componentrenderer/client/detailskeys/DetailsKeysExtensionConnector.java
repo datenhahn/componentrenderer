@@ -64,7 +64,7 @@ public class DetailsKeysExtensionConnector extends AbstractExtensionConnector {
         } else {
             logger.severe("HandlerManager count is not 1: " + handlerCount);
         }
-   
+
 
     }
 
@@ -117,7 +117,6 @@ public class DetailsKeysExtensionConnector extends AbstractExtensionConnector {
     }
 
     class DelayedScrollHandler implements ScrollHandler {
-        private double MAX_DELTA = 200;
         private boolean delayedScroll = false;
         private double lastPosition = 0;
         private Timer scrollExecutor;
@@ -132,32 +131,43 @@ public class DetailsKeysExtensionConnector extends AbstractExtensionConnector {
             double diff = lastPosition - getVerticalScrollbar(target).getScrollPos();
             double delta = Math.abs(diff);
             lastPosition = getVerticalScrollbar(target).getScrollPos();
+            double max_delta = 15 * getDefaultRowHeight(target);
 
-            if (delta > MAX_DELTA) {
-//                if(! delayedScroll) {
-//                    getParent().getElement().appendChild(indicator.getElement());
-//                }
-
+            if (delta > max_delta) {
                 delayedScroll = true;
                 scrollExecutor.cancel();
                 scrollExecutor.schedule(200);
+                showCurrentPosition();
             }
 
             if (!delayedScroll) {
                 callOnScroll(target);
-            } else {
-                //indicator.setText(Math.round(lastPosition / body.getDefaultRowHeight()) + "");
-                if (getParent() != null) {
-                    VNotification notification = VNotification.createNotification(200, target);
-                    notification.setOwner(target);
-                    notification.setAutoHideEnabled(true);
-                    notification.setWidth("90%");
-                    notification.show("        " + Math.round(lastPosition / getDefaultRowHeight(target))
-                                      + "        ", Position.MIDDLE_CENTER, null);
-                }
             }
 
             fireEvent(new ScrollEvent());
+        }
+
+        private void showCurrentPosition() {
+            final VNotification notification = VNotification.createNotification(100, target);
+            notification.setOwner(target);
+            int left = target.getElement().getAbsoluteLeft();
+            int top = target.getElement().getAbsoluteTop();
+            int height = target.getElement().getOffsetHeight();
+            int width = target.getElement().getOffsetWidth();
+            int n_height = notification.getElement().getOffsetHeight();
+            int n_width = notification.getElement().getOffsetWidth();
+            int p_left = left + Math.round((width - n_width) / 2);
+            int p_top = top + Math.round((height - n_height) / 2);
+            notification.show("        " + Math.round(lastPosition / getDefaultRowHeight(target))
+                              + "        ", Position.MIDDLE_CENTER, null);
+            notification.setPopupPosition(p_left, p_top);
+            new Timer() {
+                @Override
+                public void run() {
+                    notification.hide(true);
+                }
+            }.schedule(199);
+
         }
 
         public void setDelayedScroll(boolean delayedScroll) {
