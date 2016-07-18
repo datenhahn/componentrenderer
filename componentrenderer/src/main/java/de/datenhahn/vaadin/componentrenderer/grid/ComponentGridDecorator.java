@@ -28,6 +28,7 @@ import de.datenhahn.vaadin.componentrenderer.grid.header.ComponentHeaderGenerato
 import de.datenhahn.vaadin.componentrenderer.grid.header.HtmlHeaderGenerator;
 import de.datenhahn.vaadin.componentrenderer.grid.header.TextHeaderGenerator;
 
+import java.io.Serializable;
 import java.util.Collection;
 
 /**
@@ -36,7 +37,7 @@ import java.util.Collection;
  *
  * @author Jonas Hahn (jonas.hahn@datenhahn.de)
  */
-public class ComponentGridDecorator<T> {
+public class ComponentGridDecorator<T> implements Serializable {
 
     private final FocusPreserveExtension focusPreserveExtension;
     private final Grid grid;
