@@ -29,6 +29,7 @@ import de.datenhahn.vaadin.componentrenderer.grid.header.HtmlHeaderGenerator;
 import de.datenhahn.vaadin.componentrenderer.grid.header.TextHeaderGenerator;
 import org.junit.Test;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -73,6 +74,11 @@ public class ComponentGridDecoratorTest {
                 FocusPreserveExtension.class);
 
         assertThat(focusPreserveExtension, is(sameInstance(decorator.getFocusPreserveExtension())));
+    }
+
+    @Test
+    public void testImplementsSerializable() {
+        assertTrue(Serializable.class.isAssignableFrom(ComponentGridDecorator.class));
     }
 
     @Test
