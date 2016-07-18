@@ -120,34 +120,43 @@ public class DetailsKeysExtensionConnector extends AbstractExtensionConnector {
         private boolean delayedScroll = false;
         private double lastPosition = 0;
         private Timer scrollExecutor;
+        private long lastTime = 0;
 
         public DelayedScrollHandler() {
             lastPosition = getVerticalScrollbar(target).getScrollPos();
+            lastTime = System.currentTimeMillis();
             scrollExecutor = new DelayedScrollExecutor(this);
         }
 
         @Override
         public void onScroll(ScrollEvent event) {
-            double diff = lastPosition - getVerticalScrollbar(target).getScrollPos();
+            long scrollTime = System.currentTimeMillis();
+            long timeDiff = scrollTime - lastTime;
+            double diff = getVerticalScrollbar(target).getScrollPos() - lastPosition;
             double delta = Math.abs(diff);
+            double speed = delta / timeDiff;
             lastPosition = getVerticalScrollbar(target).getScrollPos();
+            lastTime = scrollTime;
             double max_delta = 15 * getDefaultRowHeight(target);
 
             if (delta > max_delta) {
                 delayedScroll = true;
                 scrollExecutor.cancel();
                 scrollExecutor.schedule(200);
-                showCurrentPosition();
             }
 
             if (!delayedScroll) {
+                showMessage("Speed: " + speed);
                 callOnScroll(target);
+            } else {
+                //showCurrentPosition();
+                showMessage("Delayed Scroll, Speed: " + speed);
             }
 
             fireEvent(new ScrollEvent());
         }
 
-        private void showCurrentPosition() {
+        private void showMessage(String message) {
             final VNotification notification = VNotification.createNotification(100, target);
             notification.setOwner(target);
             int left = target.getElement().getAbsoluteLeft();
@@ -158,8 +167,7 @@ public class DetailsKeysExtensionConnector extends AbstractExtensionConnector {
             int n_width = notification.getElement().getOffsetWidth();
             int p_left = left + Math.round((width - n_width) / 2);
             int p_top = top + Math.round((height - n_height) / 2);
-            notification.show("        " + Math.round(lastPosition / getDefaultRowHeight(target))
-                              + "        ", Position.MIDDLE_CENTER, null);
+            notification.show(message, Position.MIDDLE_CENTER, null);
             notification.setPopupPosition(p_left, p_top);
             new Timer() {
                 @Override
@@ -168,6 +176,11 @@ public class DetailsKeysExtensionConnector extends AbstractExtensionConnector {
                 }
             }.schedule(199);
 
+        }
+
+        private void showCurrentPosition() {
+            showMessage("        " + Math.round(lastPosition / getDefaultRowHeight(target))
+                              + "        ");
         }
 
         public void setDelayedScroll(boolean delayedScroll) {
