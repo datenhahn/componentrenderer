@@ -54,7 +54,8 @@ public class ClassicGridTab extends VerticalLayout {
         ComponentCellKeyExtension.extend(grid);
         focusPreserveExtension = FocusPreserveExtension.extend(grid);
         DetailsKeysExtension.extend(grid);
-
+        DelayedScrollerExtension delayedScroller = DelayedScrollerExtension.extend(grid);
+        delayedScroller.setScrollMessage(" Row %d ");
         addComponent(ViewComponents.createEnableDisableCheckBox(grid));
 
         grid.setSizeFull();
