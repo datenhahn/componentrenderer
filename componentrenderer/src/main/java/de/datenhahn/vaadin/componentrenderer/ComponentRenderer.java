@@ -130,23 +130,23 @@ public class ComponentRenderer extends Grid.AbstractRenderer<Component> implemen
                     componentsInUse.add(current);
                 }
             }
-
-
-            // find all components, which are no longer in use for this item id
-            Set<Component> itemIdComponents = components.get(itemId);
-
-            if (itemIdComponents != null) {
-
-                Set<Component> unusedComponents = new HashSet<>(itemIdComponents);
-                unusedComponents.removeAll(componentsInUse);
-
-                // remove unused components from current tracking
-                components.get(itemId).removeAll(unusedComponents);
-
-                // destroy unused components
-                destroyComponents(unusedComponents);
-            }
         }
+
+        // find all components, which are no longer in use for this item id
+        Set<Component> itemIdComponents = components.get(itemId);
+
+        if (itemIdComponents != null) {
+
+            Set<Component> unusedComponents = new HashSet<>(itemIdComponents);
+            unusedComponents.removeAll(componentsInUse);
+
+            // remove unused components from current tracking
+            components.get(itemId).removeAll(unusedComponents);
+
+            // destroy unused components
+            destroyComponents(unusedComponents);
+        }
+
 
     }
 
