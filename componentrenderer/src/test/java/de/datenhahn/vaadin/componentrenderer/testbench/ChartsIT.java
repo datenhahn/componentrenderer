@@ -43,18 +43,18 @@ public class ChartsIT extends AbstractTestBase {
      */
     public void testChartsRendering() throws InterruptedException, IOException {
 
-        setupFirefoxDriver();
+        setupChromiumDriver();
         getDriver().get("http://localhost:8080/testcharts");
 
 
-        assertThat($(GridElement.class).first().getCell(0,4).getAttribute("innerHTML"), containsString("<svg height=\"30\" "
-                                                                                                 + "width=\"130\""));
+        assertThat($(GridElement.class).first().getCell(0,4).getAttribute("innerHTML"),
+                containsString("width=\"130\" height=\"30\">"));
 
         $(GridElement.class).first().scrollToRow(13);
 
         $(GridElement.class).first().scrollToRow(1);
-        assertThat($(GridElement.class).first().getCell(0,4).getAttribute("innerHTML"), containsString("<svg height=\"30\" "
-                                                                                                       + "width=\"130\""));
+        assertThat($(GridElement.class).first().getCell(0,4).getAttribute("innerHTML"),
+                containsString("width=\"130\" height=\"30\">"));
 
 
 

@@ -17,7 +17,6 @@ public class MemoryIT extends AbstractTestBase {
     private static final int BATCH_SIZE = 20;
     private static final int MAX_SCROLL = 500;
 
-    @Test
     public void profileFirefox() throws InterruptedException, IOException {
         System.out.println("\n\n===Test Firefox");
         System.out.println("  BATCH_SIZE: " + BATCH_SIZE);
@@ -27,6 +26,7 @@ public class MemoryIT extends AbstractTestBase {
         runMemoryTest();
     }
 
+    @Test
     public void profileChromium() throws InterruptedException, IOException {
         System.out.println("\n\n===Test Chromium");
         System.out.println("  BATCH_SIZE: " + BATCH_SIZE);
