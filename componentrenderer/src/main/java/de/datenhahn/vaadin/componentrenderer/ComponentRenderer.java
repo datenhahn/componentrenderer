@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed under the Apache License,Version2.0(the"License");you may not
  * use this file except in compliance with the License.You may obtain a copy of
  * the License at
@@ -24,17 +24,19 @@ import elemental.json.JsonObject;
 import elemental.json.JsonValue;
 
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
- * A renderer for vaadin components.
+ * A renderer for vaadin trackedComponents.
+ *
+ * Every component column must use its own renderer, so tracking the trackedComponents by column works correctly.
  *
  * @author Jonas Hahn (jonas.hahn@datenhahn.de)
  */
 public class ComponentRenderer extends Grid.AbstractRenderer<Component> implements DataGenerator {
 
-    private final HashMap<Object, Set<Component>> components = new HashMap<>();
+    /** Tracks this renderers trackedComponents to be able to unregister them from the grid upon removal
+     *  of the renderers column */
+    private final HashMap<Object, Component> trackedComponents = new HashMap<>();
     private boolean isRemovalInProgress = false;
 
     public ComponentRenderer() {
@@ -55,7 +57,7 @@ public class ComponentRenderer extends Grid.AbstractRenderer<Component> implemen
 
     /**
      * When the renderer is detached from the grid (e.g. when the column is removed)
-     * release all components to make them eligible for garbage collection and remove
+     * release all trackedComponents to make them eligible for garbage collection and remove
      * the DataGenerator extension for this renderer from the Grid.
      *
      * @param parent the parent connector
@@ -67,12 +69,8 @@ public class ComponentRenderer extends Grid.AbstractRenderer<Component> implemen
         if (getParent() != null && parent == null) {
 
             if (!isRemovalInProgress) {
-                for (Set<Component> rowComponents : components.values()) {
-                    for (Component c : rowComponents) {
-                        removeComponentFromGrid(c);
-                    }
-                }
-                components.clear();
+
+                removeAllRendererComponentsFromGrid();
 
                 // it is important to also detach the renderers @link{DataGenerator}
                 // when the renderer is detached. The @link{com.vaadin.ui.Grid.AbstractGridExtension#remove}
@@ -100,71 +98,74 @@ public class ComponentRenderer extends Grid.AbstractRenderer<Component> implemen
     }
 
 
-    private void putComponent(Object itemId, Component component) {
+    private void trackComponent(Object itemId, Component component) {
 
-        if (!components.containsKey(itemId)) {
-            components.put(itemId, new HashSet<Component>());
+        // before tracking a new component for a row, it is necessary to remove the
+        // previously tracked one from the grid to make the component eligible for
+        // garbage collection.
+        //
+        // IMPORTANT: Only remove the component from the grid if
+        // the new component is not the same as the old one. Otherwise
+        // cached components also get removed.
+
+        Component previousComponent = trackedComponents.get(itemId);
+
+        if (previousComponent != component) {
+            if(previousComponent != null) {
+                safeRemoveComponentFromGrid(previousComponent);
+            }
+            trackedComponents.put(itemId, component);
         }
-
-        components.get(itemId).add(component);
     }
 
     @Override
-    public void generateData(Object itemId, Item item, JsonObject jsonObject) {
+    public void generateData(Object itemId, Item item, JsonObject jsonRow) {
 
-        Set<Component> componentsInUse = new HashSet<>();
+        JsonObject jsonData = jsonRow.getObject("d");
 
-        for (String key : jsonObject.getObject("d").keys()) {
-
+        for (String key : jsonData.keys()) {
 
             if (getColumn(key).getRenderer() == this) {
                 // 2: VERY IMPORTANT get the component from the connector tracker !!!
                 //    if you use a GeneratedPropertyContainer and call get Value you will
                 //    get a different component
 
-                if (jsonObject.getObject("d").get(key) != Json.createNull()) {
-                    Component current = (Component) UI.getCurrent()
-                                                      .getConnectorTracker()
-                                                      .getConnector(jsonObject.getObject("d").getString(key));
-                    putComponent(itemId, current);
-                    componentsInUse.add(current);
+                if (jsonData.get(key) != Json.createNull()) {
+                    Component current = lookupComponent(jsonData, key);
+                    trackComponent(itemId, current);
                 }
             }
-
-
-            // find all components, which are no longer in use for this item id
-            Set<Component> itemIdComponents = components.get(itemId);
-
-            if (itemIdComponents != null) {
-
-                Set<Component> unusedComponents = new HashSet<>(itemIdComponents);
-                unusedComponents.removeAll(componentsInUse);
-
-                // remove unused components from current tracking
-                components.get(itemId).removeAll(unusedComponents);
-
-                // destroy unused components
-                destroyComponents(unusedComponents);
-            }
         }
+    }
 
+    private Component lookupComponent(JsonObject jsonData, String key) {
+        return (Component) UI.getCurrent()
+                             .getConnectorTracker()
+                             .getConnector(jsonData.getString(key));
     }
 
     @Override
     public void destroyData(Object itemId) {
-        if (components.containsKey(itemId)) {
-            destroyComponents(components.get(itemId));
-            components.remove(itemId);
+        if (trackedComponents.containsKey(itemId)) {
+            safeRemoveComponentFromGrid(trackedComponents.get(itemId));
+            trackedComponents.remove(itemId);
         }
 
     }
 
-    private void destroyComponents(Set<Component> components) {
-        for (Component component : components) {
-            if (component != null) {
-                removeComponentFromGrid(component);
-            }
+    private void safeRemoveComponentFromGrid(Component component) {
+        if (component != null) {
+            removeComponentFromGrid(component);
         }
+    }
+
+    private void removeAllRendererComponentsFromGrid() {
+
+        for (Component component : trackedComponents.values()) {
+            safeRemoveComponentFromGrid(component);
+        }
+
+        trackedComponents.clear();
     }
 
 }
