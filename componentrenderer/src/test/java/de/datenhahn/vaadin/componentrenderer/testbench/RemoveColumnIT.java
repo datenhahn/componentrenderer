@@ -28,6 +28,7 @@
 
 package de.datenhahn.vaadin.componentrenderer.testbench;
 
+import com.vaadin.server.FontAwesome;
 import com.vaadin.testbench.By;
 import com.vaadin.testbench.elements.ButtonElement;
 import com.vaadin.testbench.elements.GridElement;
@@ -59,13 +60,15 @@ public class RemoveColumnIT extends AbstractTestBase {
      */
     public void removeColumnButton() throws InterruptedException, IOException {
 
-        String expected = "<div style=\"\" class=\"cr-component-cell\"><div style=\"width: 30px; height: 24px;\" class=\"v-label v-widget v-has-width v-has-height\"><span class=\"v-icon\" style=\"font-family: FontAwesome;\">.*</span></div></div>";
-
-        setupFirefoxDriver();
+        //String expectedFirefox = "<div style=\"\" class=\"cr-component-cell\"><div style=\"width: 30px; height: 24px;\" class=\"v-label v-widget v-has-width v-has-height\"><span class=\"v-icon\" style=\"font-family: FontAwesome;\">.*</span></div></div>";
+        String expectedChrome = "<div class=\"cr-component-cell\"><div class=\"v-label v-widget v-has-width "
+                                + "v-has-height\" style=\"width: 30px; height: 24px;\"><span class=\"v-icon\" "
+                                + "style=\"font-family: FontAwesome;\">.*</span></div></div>";
+        setupChromiumDriver();
         getDriver().get("http://localhost:8080/testbench");
-        assertTrue($(GridElement.class).first().getCell(0,6).getAttribute("innerHTML").matches(expected));
+        assertTrue($(GridElement.class).first().getCell(0,6).getAttribute("innerHTML").matches(expectedChrome));
         $(ButtonElement.class).id("removeColumnButton").click();
-        assertTrue($(GridElement.class).first().getCell(0,6).getAttribute("innerHTML").matches(expected));
+        assertTrue($(GridElement.class).first().getCell(0,6).getAttribute("innerHTML").matches(expectedChrome));
 
     }
 

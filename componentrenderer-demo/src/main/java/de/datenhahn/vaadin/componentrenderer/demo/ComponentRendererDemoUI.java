@@ -51,6 +51,8 @@ public class ComponentRendererDemoUI extends UI {
             setContent(new TestbenchComponentGridTab());
         } else if(vaadinRequest.getPathInfo().startsWith("/testcharts")) {
             setContent(new TestbenchChartsGridTab());
+        } else if (vaadinRequest.getPathInfo().startsWith("/testcaching")) {
+            setContent(new TestbenchCachingGridTab());
         } else {
             startDemoApp();
         }
