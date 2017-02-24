@@ -19,9 +19,9 @@ import com.google.gwt.dom.client.Node;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.vaadin.client.WidgetUtil;
 import com.vaadin.client.ui.AbstractComponentConnector;
-import com.vaadin.client.widget.grid.CellReference;
-import com.vaadin.client.widget.grid.events.BodyKeyDownHandler;
-import com.vaadin.client.widget.grid.events.GridKeyDownEvent;
+import com.vaadin.v7.client.widget.grid.CellReference;
+import com.vaadin.v7.client.widget.grid.events.BodyKeyDownHandler;
+import com.vaadin.v7.client.widget.grid.events.GridKeyDownEvent;
 
 /**
  * Handles pressing the ENTER key by setting the focus to the

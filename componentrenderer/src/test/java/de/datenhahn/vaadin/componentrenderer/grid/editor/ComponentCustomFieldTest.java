@@ -14,13 +14,13 @@
 
 package de.datenhahn.vaadin.componentrenderer.grid.editor;
 
-import com.vaadin.data.Item;
-import com.vaadin.data.Property;
-import com.vaadin.data.util.BeanItemContainer;
+import com.vaadin.v7.data.Item;
+import com.vaadin.v7.data.Property;
+import com.vaadin.v7.data.util.BeanItemContainer;
 import com.vaadin.ui.Component;
-import com.vaadin.ui.Grid;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
+import com.vaadin.v7.ui.Grid;
+import com.vaadin.v7.ui.HorizontalLayout;
+import com.vaadin.v7.ui.Label;
 import de.datenhahn.vaadin.componentrenderer.grid.ComponentGenerator;
 import de.datenhahn.vaadin.componentrenderer.grid.ComponentGridDecorator;
 import de.datenhahn.vaadin.componentrenderer.grid.ExampleBean;

@@ -15,8 +15,8 @@ package de.datenhahn.vaadin.componentrenderer.client;
 
 import com.vaadin.client.ComponentConnector;
 import com.vaadin.client.ConnectorMap;
-import com.vaadin.client.connectors.AbstractRendererConnector;
 import com.vaadin.shared.ui.Connect;
+import com.vaadin.v7.client.connectors.AbstractGridRendererConnector;
 import elemental.json.Json;
 import elemental.json.JsonValue;
 
@@ -27,7 +27,7 @@ import elemental.json.JsonValue;
  * @see ComponentRenderer
  */
 @Connect(de.datenhahn.vaadin.componentrenderer.ComponentRenderer.class)
-public class ComponentRendererConnector extends AbstractRendererConnector<ComponentConnector> {
+public class ComponentRendererConnector extends AbstractGridRendererConnector<ComponentConnector> {
 
     /**
      * Retrieve the renderer and link it with its connector.

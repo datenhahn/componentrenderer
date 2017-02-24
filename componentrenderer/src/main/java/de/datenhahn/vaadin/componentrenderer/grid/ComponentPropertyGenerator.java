@@ -14,9 +14,9 @@
 
 package de.datenhahn.vaadin.componentrenderer.grid;
 
-import com.vaadin.data.Item;
-import com.vaadin.data.sort.SortOrder;
-import com.vaadin.data.util.PropertyValueGenerator;
+import com.vaadin.v7.data.Item;
+import com.vaadin.v7.data.sort.SortOrder;
+import com.vaadin.v7.data.util.PropertyValueGenerator;
 import com.vaadin.ui.Component;
 import org.apache.commons.lang3.reflect.FieldUtils;
 

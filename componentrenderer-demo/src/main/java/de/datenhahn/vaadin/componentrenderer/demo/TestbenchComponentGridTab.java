@@ -28,8 +28,8 @@
 package de.datenhahn.vaadin.componentrenderer.demo;
 
 import com.vaadin.ui.Button;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.v7.ui.Label;
+import com.vaadin.v7.ui.VerticalLayout;
 import de.datenhahn.vaadin.componentrenderer.grid.ComponentGrid;
 
 /**

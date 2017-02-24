@@ -27,10 +27,10 @@
  */
 package de.datenhahn.vaadin.componentrenderer.demo;
 
-import com.vaadin.data.util.BeanItemContainer;
-import com.vaadin.ui.Grid;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.v7.data.util.BeanItemContainer;
+import com.vaadin.v7.ui.Grid;
+import com.vaadin.v7.ui.Label;
+import com.vaadin.v7.ui.VerticalLayout;
 import de.datenhahn.vaadin.componentrenderer.ComponentCellKeyExtension;
 import de.datenhahn.vaadin.componentrenderer.ComponentRenderer;
 import de.datenhahn.vaadin.componentrenderer.DetailsKeysExtension;
@@ -71,7 +71,6 @@ public class ClassicGridWithStaticContainerTab extends VerticalLayout {
         grid.setSelectionMode(Grid.SelectionMode.SINGLE);
 
         ((Grid.SingleSelectionModel)grid.getSelectionModel()).setDeselectAllowed(false);
-        grid.setImmediate(true);
 
         grid.setSizeFull();
 

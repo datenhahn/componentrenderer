@@ -16,8 +16,8 @@ package de.datenhahn.vaadin.componentrenderer;
 
 import com.vaadin.server.Extension;
 import com.vaadin.ui.Component;
-import com.vaadin.ui.Grid;
-import com.vaadin.ui.Label;
+import com.vaadin.v7.ui.Grid;
+import com.vaadin.v7.ui.Label;
 import de.datenhahn.vaadin.componentrenderer.client.detailskeys.DetailsOpenCloseServerRpc;
 import org.junit.Test;
 

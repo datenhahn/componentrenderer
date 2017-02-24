@@ -15,7 +15,7 @@
 package de.datenhahn.vaadin.componentrenderer.demo;
 
 import com.vaadin.server.ThemeResource;
-import com.vaadin.ui.NativeSelect;
+import com.vaadin.v7.ui.NativeSelect;
 
 public class StaticCustomer {
 

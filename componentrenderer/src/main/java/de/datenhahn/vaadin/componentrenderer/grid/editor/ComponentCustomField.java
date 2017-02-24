@@ -28,10 +28,10 @@
 
 package de.datenhahn.vaadin.componentrenderer.grid.editor;
 
-import com.vaadin.data.Property;
+import com.vaadin.v7.data.Property;
 import com.vaadin.ui.Component;
-import com.vaadin.ui.CustomField;
-import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.v7.ui.CustomField;
+import com.vaadin.v7.ui.HorizontalLayout;
 
 /**
  * Fake-Field for the grid-editor which just displays the component

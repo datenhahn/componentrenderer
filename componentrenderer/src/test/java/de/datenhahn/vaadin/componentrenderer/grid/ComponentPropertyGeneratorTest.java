@@ -14,11 +14,11 @@
 
 package de.datenhahn.vaadin.componentrenderer.grid;
 
-import com.vaadin.data.Item;
-import com.vaadin.data.sort.SortOrder;
+import com.vaadin.v7.data.Item;
+import com.vaadin.v7.data.sort.SortOrder;
 import com.vaadin.shared.data.sort.SortDirection;
 import com.vaadin.ui.Component;
-import com.vaadin.ui.Label;
+import com.vaadin.v7.ui.Label;
 import org.hamcrest.CoreMatchers;
 import org.junit.Before;
 import org.junit.Test;

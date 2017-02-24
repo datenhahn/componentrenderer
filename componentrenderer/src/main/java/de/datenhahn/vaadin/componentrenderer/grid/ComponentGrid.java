@@ -14,9 +14,9 @@
 
 package de.datenhahn.vaadin.componentrenderer.grid;
 
-import com.vaadin.data.util.BeanItemContainer;
-import com.vaadin.data.util.GeneratedPropertyContainer;
-import com.vaadin.ui.Grid;
+import com.vaadin.v7.data.util.BeanItemContainer;
+import com.vaadin.v7.data.util.GeneratedPropertyContainer;
+import com.vaadin.v7.ui.Grid;
 import de.datenhahn.vaadin.componentrenderer.FocusPreserveExtension;
 import de.datenhahn.vaadin.componentrenderer.grid.header.ComponentHeaderGenerator;
 import de.datenhahn.vaadin.componentrenderer.grid.header.HtmlHeaderGenerator;

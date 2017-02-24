@@ -1,7 +1,7 @@
 package de.datenhahn.vaadin.componentrenderer;
 
 import com.vaadin.ui.Component;
-import com.vaadin.ui.Label;
+import com.vaadin.v7.ui.Label;
 import de.datenhahn.vaadin.componentrenderer.grid.ComponentGenerator;
 import de.datenhahn.vaadin.componentrenderer.grid.ComponentGrid;
 import de.datenhahn.vaadin.componentrenderer.grid.ExampleBean;

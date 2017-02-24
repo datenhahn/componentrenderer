@@ -14,7 +14,7 @@
 package de.datenhahn.vaadin.componentrenderer.demo;
 
 import com.vaadin.ui.Component;
-import com.vaadin.ui.Label;
+import com.vaadin.v7.ui.Label;
 import de.datenhahn.vaadin.componentrenderer.grid.header.ComponentHeaderGenerator;
 
 import java.util.ResourceBundle;

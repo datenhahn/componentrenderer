@@ -13,12 +13,15 @@
  */
 package de.datenhahn.vaadin.componentrenderer.demo;
 
-import com.vaadin.data.Item;
-import com.vaadin.data.sort.SortOrder;
-import com.vaadin.data.util.BeanItemContainer;
-import com.vaadin.data.util.GeneratedPropertyContainer;
-import com.vaadin.data.util.PropertyValueGenerator;
-import com.vaadin.ui.*;
+import com.vaadin.ui.Component;
+import com.vaadin.v7.data.Item;
+import com.vaadin.v7.data.sort.SortOrder;
+import com.vaadin.v7.data.util.BeanItemContainer;
+import com.vaadin.v7.data.util.GeneratedPropertyContainer;
+import com.vaadin.v7.data.util.PropertyValueGenerator;
+import com.vaadin.v7.ui.Grid;
+import com.vaadin.v7.ui.Label;
+import com.vaadin.v7.ui.VerticalLayout;
 import de.datenhahn.vaadin.componentrenderer.ComponentCellKeyExtension;
 import de.datenhahn.vaadin.componentrenderer.ComponentRenderer;
 import de.datenhahn.vaadin.componentrenderer.DetailsKeysExtension;
@@ -48,7 +51,7 @@ public class ClassicGridTab extends VerticalLayout {
         setSpacing(true);
 
         addComponent(new Label("Look at the sourcecode to see the difference between the typed ComponentGrid and using" +
-                " the classic grid"));
+                               " the classic grid"));
 
         Grid grid = new Grid();
         ComponentCellKeyExtension.extend(grid);

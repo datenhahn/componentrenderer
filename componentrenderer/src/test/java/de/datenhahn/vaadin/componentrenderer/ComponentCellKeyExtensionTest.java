@@ -15,7 +15,7 @@
 package de.datenhahn.vaadin.componentrenderer;
 
 import com.vaadin.server.Extension;
-import com.vaadin.ui.Grid;
+import com.vaadin.v7.ui.Grid;
 import org.junit.Test;
 
 import static org.junit.Assert.assertFalse;

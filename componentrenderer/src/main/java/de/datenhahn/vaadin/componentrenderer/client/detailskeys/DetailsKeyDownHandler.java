@@ -15,8 +15,8 @@
 package de.datenhahn.vaadin.componentrenderer.client.detailskeys;
 
 import com.google.gwt.event.dom.client.KeyCodes;
-import com.vaadin.client.widget.grid.events.BodyKeyDownHandler;
-import com.vaadin.client.widget.grid.events.GridKeyDownEvent;
+import com.vaadin.v7.client.widget.grid.events.BodyKeyDownHandler;
+import com.vaadin.v7.client.widget.grid.events.GridKeyDownEvent;
 
 /**
  * Handles the expansion and collapsing of the detailsrow with STRG+DOWN (expand) and STRG+UP (collapse).

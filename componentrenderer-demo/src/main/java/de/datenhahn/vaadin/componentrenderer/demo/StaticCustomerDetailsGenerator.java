@@ -15,8 +15,12 @@
 package de.datenhahn.vaadin.componentrenderer.demo;
 
 import com.vaadin.server.Sizeable;
-import com.vaadin.shared.ui.label.ContentMode;
-import com.vaadin.ui.*;
+import com.vaadin.ui.Component;
+import com.vaadin.ui.Image;
+import com.vaadin.v7.shared.ui.label.ContentMode;
+import com.vaadin.v7.ui.Grid;
+import com.vaadin.v7.ui.HorizontalLayout;
+import com.vaadin.v7.ui.Label;
 
 public class StaticCustomerDetailsGenerator implements Grid.DetailsGenerator {
     @Override
@@ -32,7 +36,7 @@ public class StaticCustomerDetailsGenerator implements Grid.DetailsGenerator {
         image.setHeight(200, Sizeable.Unit.PIXELS);
         image.setWidth(200, Sizeable.Unit.PIXELS);
         layout.addComponent(image);
-        Label nameLabel = new Label("<h1>"+customer.getFirstName() + " " + customer.getLastName()+"</h1>", ContentMode.HTML);
+        Label nameLabel = new Label("<h1>" + customer.getFirstName() + " " + customer.getLastName() + "</h1>", ContentMode.HTML);
         layout.addComponent(nameLabel);
         layout.setExpandRatio(nameLabel, 1.0f);
         return layout;

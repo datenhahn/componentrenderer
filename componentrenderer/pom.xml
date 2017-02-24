@@ -5,13 +5,13 @@
 	<groupId>de.datenhahn.vaadin</groupId>
 	<artifactId>componentrenderer</artifactId>
 	<packaging>bundle</packaging>
-	<version>1.0.3</version>
+	<version>2.0.0-SNAPSHOT</version>
 	<name>ComponentRenderer</name>
 	<description>Renders standard vaadin components inside the vaadin grid</description>
 	<url>https://github.com/datenhahn/componentrenderer</url>
 
 	<properties>
-		<vaadin.version>7.6.2</vaadin.version>
+		<vaadin.version>8.0.0</vaadin.version>
 		<vaadin.plugin.version>${vaadin.version}</vaadin.plugin.version>
 		<jetty.plugin.version>9.2.3.v20140905</jetty.plugin.version>
 		<project.source.version>1.7</project.source.version>
@@ -74,11 +74,11 @@
 		</dependency>
 		<dependency>
 			<groupId>com.vaadin</groupId>
-			<artifactId>vaadin-server</artifactId>
+			<artifactId>vaadin-compatibility-server</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.vaadin</groupId>
-			<artifactId>vaadin-client</artifactId>
+			<artifactId>vaadin-compatibility-client</artifactId>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -269,7 +269,6 @@
 					</execution>
 				</executions>
 			</plugin>
-
 		</plugins>
 
 		<!-- This is needed for the sources required by the client-side compiler to be

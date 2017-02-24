@@ -23,8 +23,8 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.MouseEvent;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.vaadin.client.ComponentConnector;
-import com.vaadin.client.renderers.WidgetRenderer;
-import com.vaadin.client.widget.grid.RendererCellReference;
+import com.vaadin.v7.client.renderers.WidgetRenderer;
+import com.vaadin.v7.client.widget.grid.RendererCellReference;
 
 /**
  * A renderer for vaadin components.

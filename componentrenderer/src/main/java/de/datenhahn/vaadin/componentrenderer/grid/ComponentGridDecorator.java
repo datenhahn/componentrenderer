@@ -14,11 +14,11 @@
 
 package de.datenhahn.vaadin.componentrenderer.grid;
 
-import com.vaadin.data.util.BeanItemContainer;
-import com.vaadin.data.util.GeneratedPropertyContainer;
+import com.vaadin.v7.data.util.BeanItemContainer;
+import com.vaadin.v7.data.util.GeneratedPropertyContainer;
 import com.vaadin.server.Extension;
-import com.vaadin.server.communication.data.RpcDataProviderExtension;
-import com.vaadin.ui.Grid;
+import com.vaadin.v7.server.communication.data.RpcDataProviderExtension;
+import com.vaadin.v7.ui.Grid;
 import de.datenhahn.vaadin.componentrenderer.ComponentCellKeyExtension;
 import de.datenhahn.vaadin.componentrenderer.ComponentRenderer;
 import de.datenhahn.vaadin.componentrenderer.DetailsKeysExtension;
