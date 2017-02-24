@@ -42,16 +42,14 @@
 package de.datenhahn.vaadin.componentrenderer.demo;
 
 import com.vaadin.addon.charts.Sparkline;
-import com.vaadin.data.util.BeanItemContainer;
-import com.vaadin.data.util.GeneratedPropertyContainer;
 import com.vaadin.ui.*;
 import de.datenhahn.vaadin.componentrenderer.ComponentCellKeyExtension;
 import de.datenhahn.vaadin.componentrenderer.ComponentRenderer;
 import de.datenhahn.vaadin.componentrenderer.DetailsKeysExtension;
 import de.datenhahn.vaadin.componentrenderer.FocusPreserveExtension;
-import de.datenhahn.vaadin.componentrenderer.grid.ComponentGrid;
 import de.datenhahn.vaadin.componentrenderer.grid.ComponentPropertyGenerator;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
@@ -73,14 +71,16 @@ public class TestbenchChartsGridTab extends VerticalLayout {
 
     private Component createGrid() {
 
+        Grid grid = new Grid<MyPojo>();
 
-        BeanItemContainer<MyPojo> container = new BeanItemContainer<MyPojo>(MyPojo.class);
+        ArrayList gridData = new ArrayList<MyPojo>();
+
         for (int i = 0; i < 5000; ++i) {
-            container.addBean(new MyPojo(i));
+            gridData.add(new MyPojo(i));
         }
 
-        GeneratedPropertyContainer gpc = new GeneratedPropertyContainer(container);
-        Grid grid = new Grid(gpc);
+        grid.setItems(gridData);
+
 
         ComponentCellKeyExtension.extend(grid);
         focusPreserveExtension = FocusPreserveExtension.extend(grid);

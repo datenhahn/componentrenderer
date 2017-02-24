@@ -15,14 +15,14 @@
 package de.datenhahn.vaadin.componentrenderer.demo;
 
 import com.vaadin.server.Sizeable;
-import com.vaadin.shared.ui.label.ContentMode;
+import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.*;
+import com.vaadin.ui.components.grid.DetailsGenerator;
 
-public class StaticCustomerDetailsGenerator implements Grid.DetailsGenerator {
+public class StaticCustomerDetailsGenerator implements DetailsGenerator {
     @Override
-    public Component getDetails(Grid.RowReference rowReference) {
-        rowReference.getGrid().scrollTo(rowReference.getItemId());
-        StaticCustomer customer = (StaticCustomer)rowReference.getItemId();
+    public Object apply(Object rowObject) {
+        StaticCustomer customer = (StaticCustomer) rowObject;
 
         HorizontalLayout layout = new HorizontalLayout();
         layout.setHeight(300, Sizeable.Unit.PIXELS);

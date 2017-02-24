@@ -14,10 +14,13 @@
 
 package de.datenhahn.vaadin.componentrenderer.grid;
 
+import com.vaadin.data.provider.DataProvider;
+import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.data.util.GeneratedPropertyContainer;
 import com.vaadin.server.Extension;
 import com.vaadin.server.communication.data.RpcDataProviderExtension;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.Grid;
 import de.datenhahn.vaadin.componentrenderer.ComponentCellKeyExtension;
 import de.datenhahn.vaadin.componentrenderer.ComponentRenderer;
@@ -29,6 +32,7 @@ import de.datenhahn.vaadin.componentrenderer.grid.header.HtmlHeaderGenerator;
 import de.datenhahn.vaadin.componentrenderer.grid.header.TextHeaderGenerator;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -41,16 +45,13 @@ public class ComponentGridDecorator<T> implements Serializable {
 
     private final FocusPreserveExtension focusPreserveExtension;
     private final Grid grid;
-    private GeneratedPropertyContainer gpc = null;
-    private final Class<T> typeOfRows;
+    private Collection<T> backendData = new ArrayList<>();
 
-    public ComponentGridDecorator(Grid grid, Class<T> typeOfRows) {
+    public ComponentGridDecorator(Grid<T> grid) {
         this.grid = grid;
-        this.typeOfRows = typeOfRows;
         focusPreserveExtension = FocusPreserveExtension.extend(grid);
         DetailsKeysExtension.extend(grid);
         ComponentCellKeyExtension.extend(grid);
-        initGpc();
     }
 
     public FocusPreserveExtension getFocusPreserveExtension() {
@@ -61,17 +62,6 @@ public class ComponentGridDecorator<T> implements Serializable {
         return grid;
     }
 
-    /**
-     * Replaces the current grid container with a {@link GeneratedPropertyContainer}
-     * while preserving the {@link Grid.DetailsGenerator}.
-     */
-    private void initGpc() {
-        gpc = new GeneratedPropertyContainer(grid.getContainerDataSource());
-        Grid.DetailsGenerator details = grid.getDetailsGenerator();
-        grid.setContainerDataSource(gpc);
-        grid.setDetailsGenerator(details);
-    }
-
 
     /**
      * Add a generated component column to the ComponentGrid.
@@ -80,11 +70,11 @@ public class ComponentGridDecorator<T> implements Serializable {
      * @param generator  the component-generator
      * @return the decorator for method chaining
      */
-    public Grid.Column addComponentColumn(Object propertyId, ComponentGenerator<T> generator) {
-        gpc.addGeneratedProperty(propertyId, new ComponentPropertyGenerator<>(typeOfRows, generator));
-        return grid.getColumn(propertyId)
-            .setRenderer(new ComponentRenderer())
-            .setEditorField(new ComponentCustomField());
+    public Grid.Column addComponentColumn(String propertyId, ComponentGenerator<T> generator) {
+        Grid.Column column = grid.addColumn(new ComponentValueProvider<T, Component>(generator), new ComponentRenderer());
+        column.setCaption(propertyId);
+        column.setEditorComponent(new ComponentCustomField());
+        return column;
     }
 
 
@@ -96,8 +86,8 @@ public class ComponentGridDecorator<T> implements Serializable {
      * @return the decorator for method chaining
      */
     public ComponentGridDecorator<T> setRows(Collection<T> beans) {
-        gpc.removeAllItems();
-        addAll(beans);
+        this.backendData = beans;
+        grid.setItems(beans);
         return this;
     }
 
@@ -108,9 +98,7 @@ public class ComponentGridDecorator<T> implements Serializable {
      * @return the decorator for method chaining
      */
     public ComponentGridDecorator<T> addAll(Collection<T> beans) {
-        for (T bean : beans) {
-            gpc.addItem(bean);
-        }
+        this.backendData.addAll(beans);
         return this;
     }
 
@@ -120,7 +108,7 @@ public class ComponentGridDecorator<T> implements Serializable {
      * @return the decorator for method chaining
      */
     public ComponentGridDecorator<T> remove(T bean) {
-        gpc.removeItem(bean);
+        this.backendData.remove(bean);
         return this;
     }
 
@@ -130,7 +118,7 @@ public class ComponentGridDecorator<T> implements Serializable {
      * @return the decorator for method chaining
      */
     public ComponentGridDecorator<T> add(T bean) {
-        gpc.addItem(bean);
+        this.backendData.add(bean);
         return this;
     }
 

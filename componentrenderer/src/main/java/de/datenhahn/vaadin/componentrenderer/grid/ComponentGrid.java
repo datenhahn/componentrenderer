@@ -14,8 +14,6 @@
 
 package de.datenhahn.vaadin.componentrenderer.grid;
 
-import com.vaadin.data.util.BeanItemContainer;
-import com.vaadin.data.util.GeneratedPropertyContainer;
 import com.vaadin.ui.Grid;
 import de.datenhahn.vaadin.componentrenderer.FocusPreserveExtension;
 import de.datenhahn.vaadin.componentrenderer.grid.header.ComponentHeaderGenerator;
@@ -25,9 +23,6 @@ import de.datenhahn.vaadin.componentrenderer.grid.header.TextHeaderGenerator;
 import java.util.Collection;
 
 /**
- * A typed version of the grid using a {@link BeanItemContainer} to store
- * the typed grid data and a {@link GeneratedPropertyContainer} to provide
- * generated component-columns.
  *
  * Also offers some convenience methods for this use-case (typed, use of components).
  *
@@ -39,7 +34,6 @@ public class ComponentGrid<T> extends Grid {
 
     public ComponentGrid(Class<T> typeOfRows) {
         super();
-        setContainerDataSource(new BeanItemContainer<T>(typeOfRows));
         componentGridDecorator = new ComponentGridDecorator<T>(this, typeOfRows);
     }
 
@@ -102,7 +96,6 @@ public class ComponentGrid<T> extends Grid {
     }
 
     /**
-     * Remove all items from the underlying {@link BeanItemContainer} and add
      * the new beans.
      *
      * @param beans a collection of beans

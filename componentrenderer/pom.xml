@@ -11,8 +11,8 @@
 	<url>https://github.com/datenhahn/componentrenderer</url>
 
 	<properties>
-		<vaadin.version>7.6.2</vaadin.version>
-		<vaadin.plugin.version>${vaadin.version}</vaadin.plugin.version>
+		<vaadin.version>8.0.0.beta2</vaadin.version>
+		<vaadin.plugin.version>7.7.6</vaadin.plugin.version>
 		<jetty.plugin.version>9.2.3.v20140905</jetty.plugin.version>
 		<project.source.version>1.7</project.source.version>
 		<project.target.version>1.7</project.target.version>

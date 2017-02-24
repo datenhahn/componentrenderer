@@ -1,14 +1,17 @@
 package de.datenhahn.vaadin.componentrenderer.demo;
 
+import com.vaadin.client.widget.grid.RowReference;
 import com.vaadin.server.Sizeable;
-import com.vaadin.shared.ui.label.ContentMode;
+import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.*;
+import com.vaadin.ui.components.grid.DetailsGenerator;
 
-public class CustomerDetailsGenerator implements Grid.DetailsGenerator {
+public class CustomerDetailsGenerator implements DetailsGenerator {
+
     @Override
-    public Component getDetails(Grid.RowReference rowReference) {
-        rowReference.getGrid().scrollTo(rowReference.getItemId());
-        Customer customer = (Customer)rowReference.getItemId();
+    public Object apply(Object rowObject) {
+
+        Customer customer = (Customer) rowObject;
 
         HorizontalLayout layout = new HorizontalLayout();
         layout.setHeight(300, Sizeable.Unit.PIXELS);
@@ -21,6 +24,5 @@ public class CustomerDetailsGenerator implements Grid.DetailsGenerator {
         Label nameLabel = new Label("<h1>"+customer.getFirstName() + " " + customer.getLastName()+"</h1>", ContentMode.HTML);
         layout.addComponent(nameLabel);
         layout.setExpandRatio(nameLabel, 1.0f);
-        return layout;
-    }
+        return layout;    }
 }

@@ -26,52 +26,30 @@
  * the License.
  */
 
-package de.datenhahn.vaadin.componentrenderer.grid.editor;
+package de.datenhahn.vaadin.componentrenderer.grid;
 
-import com.vaadin.ui.Component;
-import com.vaadin.ui.CustomField;
-import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.data.ValueProvider;
 
 /**
- * Fake-Field for the grid-editor which just displays the component
- * from the table-cell.
- *
- * Caution! Does NOT support buffered-mode/commit. It just hands through
- * the component from the cell.
- *
- * Use it for readonly fields (e.g. Label, etc.) or in unbuffered
- * grid-editor-mode.
+ * A property value generator taylored to the needs of the typed {@link ComponentGrid}.
  *
  * @author Jonas Hahn (jonas.hahn@datenhahn.de)
  */
-public class ComponentCustomField extends CustomField<Component> {
+public class ComponentValueProvider<T, Component> implements ValueProvider {
 
-    private final HorizontalLayout layout = new HorizontalLayout();
-    private Component component;
+    private final ComponentGenerator<T> componentGenerator;
 
     /**
-     * Setup a empty layout, which later is filled with
-     * the real component from the cell.
+     * Create a new {@link ComponentValueProvider}.
      *
-     * @return the layout
+     * @param generator  the generator used to create the components
      */
-    @Override
-    protected Component initContent() {
-        layout.setSizeFull();
-        layout.addStyleName("cr-editor-field");
-        return layout;
-    }
-
-
-    @Override
-    protected void doSetValue(Component component) {
-        this.component = component;
-        layout.removeAllComponents();
-        layout.addComponent(component);
+    public ComponentValueProvider(ComponentGenerator<T> generator) {
+        this.componentGenerator = generator;
     }
 
     @Override
-    public Component getValue() {
-        return this.component;
+    public Object apply(Object o) {
+        return componentGenerator.getComponent((T) o);
     }
 }
