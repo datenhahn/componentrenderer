@@ -1,5 +1,10 @@
 # ComponentRenderer
 
+**CAUTION!!! Does NOT support Vaadin 8 Grid. Only Vaadin 7 compatibility Grid. Version 2.0.0 runs with Vaadin 8 but is only compatible with Vaadin 8 V7 compatibility layer components. For Vaadin 7 you can still use the latest 1.X.X Version which is stable.**
+
+**Upcoming Vaadin 8.1 supports components out-of-the box**:
+https://demo.vaadin.com/sampler/#ui/grids-and-trees/grid/component-renderer
+
 Renders standard Vaadin components in the grid.
 
 <img src="./doc/componentrenderer_logo.png">
